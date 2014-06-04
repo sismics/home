@@ -1,0 +1,9 @@
+{
+  "name": "sismics-home-tessel",
+  "description": "Tessel app for Sismics Home",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "express": "4.x"
+  }
+}
