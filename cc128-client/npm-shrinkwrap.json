@@ -1,0 +1,19 @@
+{
+  "name": "cc128-sismics-home-client",
+  "dependencies": {
+    "ccxmleventemitter": {
+      "version": "0.9.9-beta",
+      "from": "ccxmleventemitter@0.9.9-beta",
+      "dependencies": {
+        "serialport": {
+          "version": "1.4.0",
+          "from": "ccxmleventemitter@1.1.0"
+        },
+        "sax": {
+          "version": "0.5.4",
+          "from": "sax@0.5.4"
+        }
+      }
+    }
+  }
+}
