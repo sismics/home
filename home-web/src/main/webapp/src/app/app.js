@@ -14,6 +14,15 @@ angular.module('home',
       // Configuring UI Router
       $uiViewScrollProvider.useAnchorScroll();
       $stateProvider
+          .state('login', {
+            url: '/login',
+            views: {
+              'page': {
+                templateUrl: 'partial/login.html',
+                controller: 'Login'
+              }
+            }
+          })
           .state('main', {
             url: '',
             views: {
@@ -21,7 +30,7 @@ angular.module('home',
                 templateUrl: 'partial/main.html'
               }
             }
-          })
+          });
 
       // Configuring Restangular
       RestangularProvider.setBaseUrl('../api');

@@ -17,6 +17,8 @@ import com.mchange.v2.c3p0.ComboPooledDataSource;
 import com.sismics.home.core.dao.dbi.mapper.AuthenticationTokenMapper;
 import com.sismics.home.core.dao.dbi.mapper.BaseFunctionMapper;
 import com.sismics.home.core.dao.dbi.mapper.ConfigMapper;
+import com.sismics.home.core.dao.dbi.mapper.ElecMeterMapper;
+import com.sismics.home.core.dao.dbi.mapper.ElecMeterSampleMapper;
 import com.sismics.home.core.dao.dbi.mapper.RoleBaseFunctionMapper;
 import com.sismics.home.core.dao.dbi.mapper.RoleMapper;
 import com.sismics.home.core.dao.dbi.mapper.UserMapper;
@@ -50,6 +52,8 @@ public class DBIF {
             dbi.registerMapper(new RoleBaseFunctionMapper());
             dbi.registerMapper(new RoleMapper());
             dbi.registerMapper(new UserMapper());
+            dbi.registerMapper(new ElecMeterMapper());
+            dbi.registerMapper(new ElecMeterSampleMapper());
         } catch (Throwable t) {
             log.error("Error creating DBI", t);
         }

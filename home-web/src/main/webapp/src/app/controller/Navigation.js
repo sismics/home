@@ -28,7 +28,6 @@ angular.module('home').controller('Navigation', function($rootScope, $http, $sco
   
   // User logout
   $scope.logout = function($event) {
-    Playlist.reset();
     User.logout().then(function() {
       User.userInfo(true).then(function(data) {
         $rootScope.userInfo = data;

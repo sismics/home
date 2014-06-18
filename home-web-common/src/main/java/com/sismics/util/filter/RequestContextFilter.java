@@ -1,12 +1,18 @@
 package com.sismics.util.filter;
 
-import com.sismics.home.core.constant.Constants;
-import com.sismics.home.core.model.context.AppContext;
-import com.sismics.home.core.util.DirectoryUtil;
-import com.sismics.home.core.util.TransactionUtil;
-import com.sismics.util.EnvironmentUtil;
-import com.sismics.util.context.ThreadLocalContext;
-import com.sismics.util.dbi.DBIF;
+import java.io.File;
+import java.io.IOException;
+import java.text.MessageFormat;
+
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.log4j.Level;
 import org.apache.log4j.PatternLayout;
 import org.apache.log4j.RollingFileAppender;
@@ -15,13 +21,12 @@ import org.skife.jdbi.v2.TransactionIsolationLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.*;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.IOException;
-import java.text.MessageFormat;
-import java.util.Locale;
+import com.sismics.home.core.model.context.AppContext;
+import com.sismics.home.core.util.DirectoryUtil;
+import com.sismics.home.core.util.TransactionUtil;
+import com.sismics.util.EnvironmentUtil;
+import com.sismics.util.context.ThreadLocalContext;
+import com.sismics.util.dbi.DBIF;
 
 /**
  * Filter used to process a couple things in the request context.
@@ -36,9 +41,6 @@ public class RequestContextFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        // Force the locale in order to not depend on the execution environment
-        Locale.setDefault(new Locale(Constants.DEFAULT_LOCALE_ID));
-
         // Initialize the app directory
         if (!filterConfig.getServletContext().getServerInfo().startsWith("Grizzly")) {
             EnvironmentUtil.setWebappContext(true);
