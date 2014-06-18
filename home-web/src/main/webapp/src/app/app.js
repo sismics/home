@@ -5,7 +5,7 @@
  */
 angular.module('home',
         // Dependencies
-        ['ui.router', 'restangular', 'mgcrea.ngStrap'])
+        ['ui.router', 'restangular', 'mgcrea.ngStrap', 'highcharts-ng'])
 
     /**
      * Configuring modules.
@@ -24,10 +24,11 @@ angular.module('home',
             }
           })
           .state('main', {
-            url: '',
+            url: '/',
             views: {
               'page': {
-                templateUrl: 'partial/main.html'
+                templateUrl: 'partial/main.html',
+                controller: 'Main'
               }
             }
           });

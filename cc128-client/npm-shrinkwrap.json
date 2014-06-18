@@ -1,6 +1,9 @@
 {
   "name": "cc128-sismics-home-client",
   "dependencies": {
+    "restler": {
+      "version": "3.2.2"
+    },
     "ccxmleventemitter": {
       "version": "0.9.9-beta",
       "from": "ccxmleventemitter@0.9.9-beta",

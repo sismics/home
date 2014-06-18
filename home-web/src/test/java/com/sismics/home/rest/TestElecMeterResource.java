@@ -1,5 +1,7 @@
 package com.sismics.home.rest;
 
+import java.util.Date;
+
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.ws.rs.client.Entity;
@@ -66,6 +68,24 @@ public class TestElecMeterResource extends BaseJerseyTest {
         elecMeter0 = elecMeters.getJsonObject(0);
         Assert.assertEquals("heating", elecMeter0.getString("name"));
 
+        // Add a sample to the electricity meter
+        long date = new Date().getTime();
+        json = target().path("/elec_meter/" + elecMeter0Id + "/sample").request()
+                .put(Entity.form(new Form()
+                        .param("date", "" + date)
+                        .param("value", "254")), JsonObject.class);
+        Assert.assertEquals("ok", json.getString("status"));
+        
+        // Get the electricity meter
+        json = target().path("/elec_meter/" + elecMeter0Id).request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
+                .get(JsonObject.class);
+        Assert.assertEquals("heating", json.getString("name"));
+        JsonArray samples = json.getJsonArray("samples");
+        Assert.assertEquals(1, samples.size());
+        Assert.assertEquals(date, samples.getJsonObject(0).getJsonNumber("date").longValue());
+        Assert.assertEquals(254, samples.getJsonObject(0).getInt("value"));
+        
         // Delete the electricity meter
         json = target().path("/elec_meter/" + elecMeter0Id).request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)

@@ -4,22 +4,34 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.skife.jdbi.v2.StatementContext;
-import org.skife.jdbi.v2.tweak.ResultSetMapper;
 
 import com.sismics.home.core.model.dbi.ElecMeterSample;
+import com.sismics.util.dbi.BaseResultSetMapper;
 
 /**
  * Electricity meter sample result set mapper.
  *
  * @author bgamard
  */
-public class ElecMeterSampleMapper implements ResultSetMapper<ElecMeterSample> {
+public class ElecMeterSampleMapper extends BaseResultSetMapper<ElecMeterSample> {
+    @Override
+    public String[] getColumns() {
+        return new String[] {
+            "EMS_ID_C",
+            "EMS_IDEMR_C",
+            "EMS_CREATEDATE_D",
+            "EMS_VALUE_N"
+        };
+    }
+    
     @Override
     public ElecMeterSample map(int index, ResultSet r, StatementContext ctx) throws SQLException {
+        final String[] columns = getColumns();
+        int column = 0;
         return new ElecMeterSample(
-                r.getString("EMS_ID_C"),
-                r.getString("EMS_IDEMR_C"),
-                r.getDate("EMS_CREATEDATE_D"),
-                r.getInt("EMS_VALUE_N"));
+                r.getString(columns[column++]),
+                r.getString(columns[column++]),
+                r.getTimestamp(columns[column++]),
+                r.getInt(columns[column++]));
     }
 }

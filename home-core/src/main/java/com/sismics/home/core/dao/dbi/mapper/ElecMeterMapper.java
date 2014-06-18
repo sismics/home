@@ -31,7 +31,7 @@ public class ElecMeterMapper extends BaseResultSetMapper<ElecMeter> {
         return new ElecMeter(
                 r.getString(columns[column++]),
                 r.getString(columns[column++]),
-                r.getDate(columns[column++]),
-                r.getDate(columns[column++]));
+                r.getTimestamp(columns[column++]),
+                r.getTimestamp(columns[column++]));
     }
 }

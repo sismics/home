@@ -1,5 +1,6 @@
 package com.sismics.home.core.dao.dbi;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -8,7 +9,9 @@ import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.Query;
 
 import com.sismics.home.core.dao.dbi.mapper.ElecMeterMapper;
+import com.sismics.home.core.dao.dbi.mapper.ElecMeterSampleMapper;
 import com.sismics.home.core.model.dbi.ElecMeter;
+import com.sismics.home.core.model.dbi.ElecMeterSample;
 import com.sismics.util.context.ThreadLocalContext;
 
 /**
@@ -39,6 +42,29 @@ public class ElecMeterDao {
                 .execute();
 
         return elecMeter.getId();
+    }
+    
+    /**
+     * Creates a new electricity meter sample.
+     * 
+     * @param sample Electricity meter sample to create
+     */
+    public String createSample(ElecMeterSample sample) {
+        // Init electricity meter sample data
+        sample.setId(UUID.randomUUID().toString());
+
+        // Create electricity meter sample
+        final Handle handle = ThreadLocalContext.get().getHandle();
+        handle.createStatement("insert into " +
+                " T_ELEC_METER_SAMPLE(EMS_ID_C, EMS_IDEMR_C, EMS_VALUE_N, EMS_CREATEDATE_D)" +
+                " values(:id, :elecMeterId, :value, :createDate)")
+                .bind("id", sample.getId())
+                .bind("elecMeterId", sample.getElecMeterId())
+                .bind("value", sample.getValue())
+                .bind("createDate", new Timestamp(sample.getCreateDate().getTime()))
+                .execute();
+
+        return sample.getId();
     }
     
     /**
@@ -100,8 +126,25 @@ public class ElecMeterDao {
         Query<ElecMeter> q = handle.createQuery("select " + new ElecMeterMapper().getJoinedColumns("e") +
                 "  from T_ELEC_METER e " +
                 "  where e.EMR_DELETEDATE_D is null" +
-                "  order by e.EMR_NAME_C is null")
+                "  order by e.EMR_NAME_C")
                 .mapTo(ElecMeter.class);
+        return q.list();
+    }
+    
+    /**
+     * Returns all samples from an electricity meter.
+     * 
+     * @param id ID
+     * @return Samples from an electricity meter
+     */
+    public List<ElecMeterSample> findAllSample(String id) {
+        Handle handle = ThreadLocalContext.get().getHandle();
+        Query<ElecMeterSample> q = handle.createQuery("select " + new ElecMeterSampleMapper().getJoinedColumns("e") +
+                "  from T_ELEC_METER_SAMPLE e " +
+                "  where e.EMS_IDEMR_C = :id" +
+                "  order by e.EMS_CREATEDATE_D")
+                .bind("id", id)
+                .mapTo(ElecMeterSample.class);
         return q.list();
     }
 }

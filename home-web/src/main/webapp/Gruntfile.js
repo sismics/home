@@ -34,7 +34,7 @@ module.exports = function(grunt) {
         options: {
           separator: ';'
         },
-        src: ['src/lib/jquery.js', 'src/lib/underscore.js', 'src/lib/angular.js', 'src/lib/angular.*.js',
+        src: ['src/lib/jquery.js', 'src/lib/underscore.js', 'src/lib/highcharts.js', 'src/lib/angular.js', 'src/lib/angular.*.js',
           'dist/app/app.js', 'dist/app/controller/*.js', 'dist/app/directive/*.js', 'dist/app/filter/*.js', 'dist/app/service/*.js'],
         dest: 'dist/home.js'
       },

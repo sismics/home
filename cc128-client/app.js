@@ -1,8 +1,7 @@
-var ccSvc, envir, fs;
-
-fs = require('fs');
-
-ccSvc = require('ccxmleventemitter');
+var meterId = "main";
+var fs = require('fs');
+var rest = require('restler');
+var ccSvc = require('ccxmleventemitter');
 
 /*
 scenario:
@@ -31,6 +30,13 @@ envir.on('base', function(eventinfo) {
 envir.on('sensor', function(eventinfo) {
   if (eventinfo.sensor === '0') {
     console.log("Whole House consumption reported as " + eventinfo.watts + " watts");
+    console.log(eventinfo.time.getTime());
+    rest.put("http://localhost:9999/home-web/api/elec_meter/" + meterId + "/sample", {
+      data: {
+        date: eventinfo.time.getTime() + 7200000,
+        value: eventinfo.watts
+      }
+    })
   }
   if ((eventinfo.sensor !== '0') && (eventinfo.watts > 0)) {
     return console.log("IAM " + eventinfo.sensor + " reported as " + eventinfo.watts + " watts");

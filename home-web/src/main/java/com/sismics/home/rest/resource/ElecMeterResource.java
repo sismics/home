@@ -1,9 +1,11 @@
 package com.sismics.home.rest.resource;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
@@ -18,6 +20,7 @@ import javax.ws.rs.core.Response;
 
 import com.sismics.home.core.dao.dbi.ElecMeterDao;
 import com.sismics.home.core.model.dbi.ElecMeter;
+import com.sismics.home.core.model.dbi.ElecMeterSample;
 import com.sismics.home.rest.constant.BaseFunction;
 import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ForbiddenClientException;
@@ -39,7 +42,7 @@ public class ElecMeterResource extends BaseResource {
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
     public Response create(
-        @FormParam("name") String name) {
+            @FormParam("name") String name) {
 
         if (!authenticate()) {
             throw new ForbiddenClientException();
@@ -62,6 +65,44 @@ public class ElecMeterResource extends BaseResource {
                 .build();
     }
 
+    /**
+     * Creates a new electricity meter sample.
+     *
+     * @param name Name
+     * @return Response
+     */
+    @PUT
+    @Path("{id: [a-z0-9\\-]+}/sample")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response createSample(
+            @PathParam("id") String id,
+            @FormParam("date") String dateStr,
+            @FormParam("value") Integer value) {
+        // Check if the electricity meter exists
+        ElecMeterDao elecMeterDao = new ElecMeterDao();
+        ElecMeter elecMeter = elecMeterDao.getActiveById(id);
+        if (elecMeter == null) {
+            throw new ClientException("ElecMeterNotFound", "The electricity meter doesn't exist");
+        }
+        
+        // Validate the input data
+        ValidationUtil.validateRequired(value, "value");
+        Date date = ValidationUtil.validateDate(dateStr, "date", false);
+
+        // Create the electricity meter sample
+        ElecMeterSample sample = new ElecMeterSample();
+        sample.setCreateDate(date);
+        sample.setValue(value);
+        sample.setElecMeterId(id);
+
+        elecMeterDao.createSample(sample);
+
+        // Always return OK
+        return Response.ok()
+                .entity(Json.createObjectBuilder().add("status", "ok").build())
+                .build();
+    }
+    
     /**
      * Updates electricity meter informations.
      *
@@ -93,6 +134,50 @@ public class ElecMeterResource extends BaseResource {
         // Always return OK
         return Response.ok()
                 .entity(Json.createObjectBuilder().add("status", "ok").build())
+                .build();
+    }
+    
+    /**
+     * Get an electricity meter.
+     *
+     * @param id ID
+     * @return Response
+     */
+    @GET
+    @Path("{id: [a-z0-9\\-]+}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response get(@PathParam("id") String id) {
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
+
+        // Check if the electricity meter exists
+        ElecMeterDao elecMeterDao = new ElecMeterDao();
+        ElecMeter elecMeter = elecMeterDao.getActiveById(id);
+        if (elecMeter == null) {
+            throw new ClientException("ElecMeterNotFound", "The electricity meter doesn't exist");
+        }
+        
+        // Get all samples
+        List<ElecMeterSample> sampleList = elecMeterDao.findAllSample(id);
+
+        JsonArrayBuilder samples = Json.createArrayBuilder();
+        for (ElecMeterSample sample : sampleList) {
+            samples.add(Json.createObjectBuilder()
+                    .add("date", sample.getCreateDate().getTime())
+                    .add("value", sample.getValue()));
+        }
+        
+        // Build the output
+        JsonObject json = Json.createObjectBuilder()
+                .add("id", elecMeter.getId())
+                .add("name", elecMeter.getName())
+                .add("samples", samples)
+                .build();
+
+        // Always return OK
+        return Response.ok()
+                .entity(json)
                 .build();
     }
 

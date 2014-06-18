@@ -3,7 +3,8 @@
   "description": "CC128 Client for Sismics Home",
   "author": "Benjamin Gamard <benjamin.gam@gmail.com>",
   "dependencies": {
-    "ccxmleventemitter": "0.9.9-beta"
+    "ccxmleventemitter": "0.9.9-beta",
+    "restler": "3.2.2"
   },
   "engine": "node 0.10.29"
 }
