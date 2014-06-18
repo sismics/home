@@ -12,7 +12,7 @@ connected to linux usb serial port /dev/ttyUSB0
 */
 
 
-envir = new ccSvc.CurrentCost128XMLBaseStation('COM1', {
+envir = new ccSvc.CurrentCost128XMLBaseStation('COM3', {
   useOSTime: true,
   debug: true,
   emitBaseEvery: 30,

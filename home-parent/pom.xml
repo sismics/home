@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.sismics.home</groupId>
+  <artifactId>home-parent</artifactId>
+  <packaging>pom</packaging>
+  <version>1.0-SNAPSHOT</version>
+
+  <name>Home Parent</name>
+
+  <properties>
+    <maven.compiler.source>1.7</maven.compiler.source>
+    <maven.compiler.target>1.7</maven.compiler.target>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+    <!-- Dependencies version (external) -->
+    <commons-lang.commons-lang.version>2.6</commons-lang.commons-lang.version>
+    <commons-io.commons-io.version>2.1</commons-io.commons-io.version>
+    <com.google.guava.guava.version>15.0</com.google.guava.guava.version>
+    <log4j.log4j.version>1.2.16</log4j.log4j.version>
+    <org.slf4j.version>1.6.4</org.slf4j.version>
+    <org.slf4j.jcl-over-slf4j.version>1.6.6</org.slf4j.jcl-over-slf4j.version>
+    <junit.junit.version>4.11</junit.junit.version>
+    <com.h2database.h2.version>1.3.175</com.h2database.h2.version>
+    <com.mchange.c3p0.version>0.9.5-pre6</com.mchange.c3p0.version>
+    <org.mindrot.jbcrypt>0.3m</org.mindrot.jbcrypt>
+    <org.jdbi.jdbi.version>2.51</org.jdbi.jdbi.version>
+    <org.glassfish.jersey.version>2.6</org.glassfish.jersey.version>
+    <org.subethamail.subethasmtp.version>3.1.6</org.subethamail.subethasmtp.version>
+    <org.subethamail.subethasmtp-wiser.version>1.2</org.subethamail.subethasmtp-wiser.version>
+    <javax.servlet.javax.servlet-api.version>3.0.1</javax.servlet.javax.servlet-api.version>
+
+    <commons-dbcp.version>1.4</commons-dbcp.version>
+    <joda-time.joda-time.version>2.2</joda-time.joda-time.version>
+
+    <!-- Plugins version -->
+    <org.apache.maven.plugins.maven-antrun-plugin.version>1.7</org.apache.maven.plugins.maven-antrun-plugin.version>
+    <org.apache.maven.plugins.maven-dependency-plugin.version>2.7</org.apache.maven.plugins.maven-dependency-plugin.version>
+    <org.apache.maven.plugins.maven-jar-plugin.version>2.4</org.apache.maven.plugins.maven-jar-plugin.version>
+    <org.apache.maven.plugins.maven-release-plugin.version>2.4.1</org.apache.maven.plugins.maven-release-plugin.version>
+    <org.apache.maven.plugins.maven-resources-plugin.version>2.6</org.apache.maven.plugins.maven-resources-plugin.version>
+    <org.apache.maven.plugins.maven-war-plugin.version>2.2</org.apache.maven.plugins.maven-war-plugin.version>
+    <org.eclipse.jetty.jetty-maven-plugin.version>9.1.3.v20140225</org.eclipse.jetty.jetty-maven-plugin.version>
+  </properties> 
+  
+  <scm>
+    <connection>scm:git:https://github.com/sismics/home.git</connection>
+    <developerConnection>scm:git:https://github.com/sismics/home.git</developerConnection>
+    <url>scm:git:https://github.com/sismics/home.git</url>
+    <tag>HEAD</tag>
+  </scm>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>${org.apache.maven.plugins.maven-antrun-plugin.version}</version>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>${org.apache.maven.plugins.maven-dependency-plugin.version}</version>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>${org.apache.maven.plugins.maven-jar-plugin.version}</version>
+      </plugin>
+      
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>${org.apache.maven.plugins.maven-release-plugin.version}</version>
+        <configuration>
+          <tagNameFormat>@{project.version}</tagNameFormat>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>${org.apache.maven.plugins.maven-resources-plugin.version}</version>
+      </plugin>
+      
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>${org.apache.maven.plugins.maven-war-plugin.version}</version>
+      </plugin>
+      
+      <plugin>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-maven-plugin</artifactId>
+        <version>${org.eclipse.jetty.jetty-maven-plugin.version}</version>
+      </plugin>
+    </plugins>
+  </build>
+        
+  <modules>
+    <module>../home-core</module>
+    <module>../home-web-common</module>
+    <module>../home-web</module>
+  </modules>
+  
+  <profiles>
+    <profile>
+      <id>prod</id>
+      <modules>
+        <module>../home-distribution-standalone</module>
+      </modules>
+    </profile>
+    
+    <profile>
+      <id>windows</id>
+      <activation>
+        <os>
+          <family>windows</family>
+        </os>
+      </activation>
+      <properties>
+        <nsis.home>C:\Program Files (x86)\nsis</nsis.home>
+        <launch4j.home>C:\app\launch4j</launch4j.home>
+      </properties>
+    </profile>
+    <profile>
+      <id>linux</id>
+      <activation>
+        <os>
+          <family>unix</family>
+        </os>
+      </activation>
+      <properties>
+        <nsis.home>/usr/bin</nsis.home>
+        <launch4j.home>/opt/launch4j</launch4j.home>
+      </properties>
+    </profile>
+  </profiles>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>com.sismics.home</groupId>
+        <artifactId>home-core</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+    
+      <dependency>
+        <groupId>com.sismics.home</groupId>
+        <artifactId>home-web-common</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+    
+      <dependency>
+        <groupId>com.sismics.home</groupId>
+        <artifactId>home-web-common</artifactId>
+        <type>test-jar</type>
+        <version>${project.version}</version>
+      </dependency>
+    
+      <dependency>
+        <groupId>com.sismics.home</groupId>
+        <artifactId>home-web</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+    
+      <dependency>
+        <groupId>com.sismics.home</groupId>
+        <artifactId>home-distribution-standalone</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+    
+      <dependency>
+        <groupId>commons-lang</groupId>
+        <artifactId>commons-lang</artifactId>
+        <version>${commons-lang.commons-lang.version}</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>commons-io</groupId>
+        <artifactId>commons-io</artifactId>
+        <version>${commons-io.commons-io.version}</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>com.google.guava</groupId>
+        <artifactId>guava</artifactId>
+        <version>${com.google.guava.guava.version}</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>log4j</groupId>
+        <artifactId>log4j</artifactId>
+        <version>${log4j.log4j.version}</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-log4j12</artifactId>
+        <version>${org.slf4j.version}</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>${org.slf4j.version}</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>org.mindrot</groupId>
+        <artifactId>jbcrypt</artifactId>
+        <version>${org.mindrot.jbcrypt}</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>jcl-over-slf4j</artifactId>
+        <version>${org.slf4j.jcl-over-slf4j.version}</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>${junit.junit.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.mindrot</groupId>
+        <artifactId>jbcrypt</artifactId>
+        <version>${org.mindrot.jbcrypt}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>javax.servlet-api</artifactId>
+        <version>${javax.servlet.javax.servlet-api.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.glassfish.jersey.containers</groupId>
+        <artifactId>jersey-container-servlet</artifactId>
+        <version>${org.glassfish.jersey.version}</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>org.glassfish.jersey.media</groupId>
+        <artifactId>jersey-media-json-processing</artifactId>
+        <version>${org.glassfish.jersey.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.glassfish.jersey.test-framework.providers</groupId>
+        <artifactId>jersey-test-framework-provider-external</artifactId>
+        <version>${org.glassfish.jersey.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.glassfish.jersey.test-framework.providers</groupId>
+        <artifactId>jersey-test-framework-provider-grizzly2</artifactId>
+        <version>${org.glassfish.jersey.version}</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>org.glassfish.jersey.containers</groupId>
+        <artifactId>jersey-container-grizzly2-servlet</artifactId>
+        <version>${org.glassfish.jersey.version}</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>com.h2database</groupId>
+        <artifactId>h2</artifactId>
+        <version>${com.h2database.h2.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.mchange</groupId>
+        <artifactId>c3p0</artifactId>
+        <version>${com.mchange.c3p0.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.jdbi</groupId>
+        <artifactId>jdbi</artifactId>
+        <version>${org.jdbi.jdbi.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>commons-dbcp</groupId>
+        <artifactId>commons-dbcp</artifactId>
+        <version>${commons-dbcp.version}</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>joda-time</groupId>
+        <artifactId>joda-time</artifactId>
+        <version>${joda-time.joda-time.version}</version>
+      </dependency>
+
+    </dependencies>
+  </dependencyManagement>
+</project>

@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <parent>
+    <groupId>com.sismics.home</groupId>
+    <artifactId>home-parent</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <relativePath>../home-parent</relativePath>
+  </parent>
+  
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>home-web</artifactId>
+  <packaging>war</packaging>
+  <name>Home Web</name>
+
+  <dependencies>
+    <!-- Dependencies to Home -->
+    <dependency>
+      <groupId>com.sismics.home</groupId>
+      <artifactId>home-core</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>com.sismics.home</groupId>
+      <artifactId>home-web-common</artifactId>
+    </dependency>
+    
+    <!-- Dependencies to Jersey -->
+    <dependency>
+      <groupId>org.glassfish.jersey.containers</groupId>
+      <artifactId>jersey-container-servlet</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.glassfish.jersey.media</groupId>
+      <artifactId>jersey-media-json-processing</artifactId>
+    </dependency>
+    
+    <!-- Other external dependencies -->
+    <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+    </dependency>
+  
+    <dependency>
+      <groupId>commons-dbcp</groupId>
+      <artifactId>commons-dbcp</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+  
+    <dependency>
+      <groupId>joda-time</groupId>
+      <artifactId>joda-time</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+    </dependency>
+
+    <!-- Test dependencies -->
+    <dependency>
+      <groupId>com.sismics.home</groupId>
+      <artifactId>home-web-common</artifactId>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.glassfish.jersey.test-framework.providers</groupId>
+      <artifactId>jersey-test-framework-provider-bundle</artifactId>
+      <version>2.6</version>
+      <type>pom</type>
+      <scope>test</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.glassfish.jersey.test-framework.providers</groupId>
+      <artifactId>jersey-test-framework-provider-grizzly2</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.glassfish.jersey.containers</groupId>
+      <artifactId>jersey-container-grizzly2-servlet</artifactId>
+      <scope>test</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+  </dependencies>
+
+  <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+      </resource>
+    </resources>
+  </build>
+
+  <profiles>
+    <!-- Development profile (active by default) -->
+    <profile>
+      <id>dev</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      
+      <build>
+        <resources>
+          <resource>
+            <directory>src/dev/resources</directory>
+            <filtering>false</filtering>
+            <excludes>
+              <exclude>**/config.properties</exclude>
+            </excludes>
+          </resource>
+          <resource>
+            <directory>src/dev/resources</directory>
+            <filtering>true</filtering>
+            <includes>
+              <include>**/config.properties</include>
+            </includes>
+          </resource>
+        </resources>
+
+        <plugins>
+          <plugin>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-maven-plugin</artifactId>
+            <configuration>
+              <systemProperties>
+                <systemProperty>
+                  <name>application.mode</name>
+                  <value>dev</value>
+                </systemProperty>
+              </systemProperties>
+              <webApp>
+                <contextPath>/home-web</contextPath>
+                <overrideDescriptor>src/dev/main/webapp/web-override.xml</overrideDescriptor>
+              </webApp>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    
+    <!-- Production profile -->
+    <profile>
+      <id>prod</id>
+
+      <build>
+        <resources>
+          <resource>
+            <directory>src/prod/resources</directory>
+            <filtering>false</filtering>
+            <excludes>
+              <exclude>**/config.properties</exclude>
+            </excludes>
+          </resource>
+          <resource>
+            <directory>src/prod/resources</directory>
+            <filtering>true</filtering>
+            <includes>
+              <include>**/config.properties</include>
+            </includes>
+          </resource>
+        </resources>
+        
+        <plugins>
+        
+          <!-- Launch NPM & Grunt -->
+          <plugin>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <version>1.7</version>
+            <executions>
+              <execution>
+                <phase>generate-sources</phase>
+                <configuration>
+                  <target name="building">
+                    <!-- npm install -->
+                    <exec executable="cmd" dir="${project.basedir}/src/main/webapp" osfamily="windows" failonerror="true">
+                      <arg line="/c npm install" />
+                    </exec>
+                    <exec executable="npm" dir="${project.basedir}/src/main/webapp" osfamily="unix" failonerror="true">
+                      <arg line="install" />
+                    </exec>
+                    <!-- grunt -->
+                    <exec executable="cmd" dir="${project.basedir}/src/main/webapp" osfamily="windows">
+                      <arg line="/c grunt --apiurl=api" />
+                    </exec>
+                    <exec executable="grunt" dir="${project.basedir}/src/main/webapp" osfamily="unix">
+                      <arg line="--apiurl=api" />
+                    </exec>
+                  </target>
+                </configuration>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        
+          <!-- WAR generation -->
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-war-plugin</artifactId>
+            <configuration>
+              <warSourceDirectory>${basedir}/src/main/webapp/dist</warSourceDirectory>
+              <webXml>src\main\webapp\WEB-INF\web.xml</webXml>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    
+    <!-- Hosted version profile -->
+    <profile>
+      <id>hosted</id>
+      <build>
+        <resources>
+          <resource>
+            <directory>src/hosted/resources</directory>
+            <filtering>false</filtering>
+          </resource>
+        </resources>
+      </build>
+    </profile>
+  </profiles>  
+</project>
