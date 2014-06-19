@@ -18,23 +18,23 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import com.sismics.home.core.dao.dbi.ElecMeterDao;
-import com.sismics.home.core.model.dbi.ElecMeter;
-import com.sismics.home.core.model.dbi.ElecMeterSample;
+import com.sismics.home.core.dao.dbi.SensorDao;
+import com.sismics.home.core.model.dbi.Sensor;
+import com.sismics.home.core.model.dbi.SensorSample;
 import com.sismics.home.rest.constant.BaseFunction;
 import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.rest.util.ValidationUtil;
 
 /**
- * Electricity meter REST resources.
+ * Sensor REST resources.
  * 
  * @author bgamard
  */
-@Path("/elec_meter")
-public class ElecMeterResource extends BaseResource {
+@Path("/sensor")
+public class SensorResource extends BaseResource {
     /**
-     * Creates a new electricity meter.
+     * Creates a new sensor.
      *
      * @param name Name
      * @return Response
@@ -53,11 +53,11 @@ public class ElecMeterResource extends BaseResource {
         name = ValidationUtil.validateLength(name, "name", 1, 100);
 
         // Create the electricity meter
-        ElecMeter elecMeter = new ElecMeter();
-        elecMeter.setName(name);
+        Sensor sensor = new Sensor();
+        sensor.setName(name);
 
-        ElecMeterDao elecMeterDao = new ElecMeterDao();
-        elecMeterDao.create(elecMeter);
+        SensorDao sensorDao = new SensorDao();
+        sensorDao.create(sensor);
 
         // Always return OK
         return Response.ok()
@@ -66,7 +66,7 @@ public class ElecMeterResource extends BaseResource {
     }
 
     /**
-     * Creates a new electricity meter sample.
+     * Creates a new sensor sample.
      *
      * @param name Name
      * @return Response
@@ -78,24 +78,24 @@ public class ElecMeterResource extends BaseResource {
             @PathParam("id") String id,
             @FormParam("date") String dateStr,
             @FormParam("value") Integer value) {
-        // Check if the electricity meter exists
-        ElecMeterDao elecMeterDao = new ElecMeterDao();
-        ElecMeter elecMeter = elecMeterDao.getActiveById(id);
-        if (elecMeter == null) {
-            throw new ClientException("ElecMeterNotFound", "The electricity meter doesn't exist");
+        // Check if the sensor exists
+        SensorDao sensorDao = new SensorDao();
+        Sensor sensor = sensorDao.getActiveById(id);
+        if (sensor == null) {
+            throw new ClientException("SensorNotFound", "The sensor doesn't exist");
         }
         
         // Validate the input data
         ValidationUtil.validateRequired(value, "value");
         Date date = ValidationUtil.validateDate(dateStr, "date", false);
 
-        // Create the electricity meter sample
-        ElecMeterSample sample = new ElecMeterSample();
+        // Create the sensor sample
+        SensorSample sample = new SensorSample();
         sample.setCreateDate(date);
         sample.setValue(value);
-        sample.setElecMeterId(id);
+        sample.setSensorId(id);
 
-        elecMeterDao.createSample(sample);
+        sensorDao.createSample(sample);
 
         // Always return OK
         return Response.ok()
@@ -104,7 +104,7 @@ public class ElecMeterResource extends BaseResource {
     }
     
     /**
-     * Updates electricity meter informations.
+     * Updates sensor informations.
      *
      * @param id ID
      * @param name Name
@@ -125,11 +125,11 @@ public class ElecMeterResource extends BaseResource {
         // Validate the input data
         name = ValidationUtil.validateLength(name, "name", 1, 100);
 
-        // Update the electricity meter
-        ElecMeterDao elecMeterDao = new ElecMeterDao();
-        ElecMeter elecMeter = elecMeterDao.getActiveById(id);
-        elecMeter.setName(name);
-        elecMeter = elecMeterDao.update(elecMeter);
+        // Update the sensor
+        SensorDao sensorDao = new SensorDao();
+        Sensor sensor = sensorDao.getActiveById(id);
+        sensor.setName(name);
+        sensor = sensorDao.update(sensor);
 
         // Always return OK
         return Response.ok()
@@ -138,7 +138,7 @@ public class ElecMeterResource extends BaseResource {
     }
     
     /**
-     * Get an electricity meter.
+     * Get a sensor.
      *
      * @param id ID
      * @return Response
@@ -151,18 +151,18 @@ public class ElecMeterResource extends BaseResource {
             throw new ForbiddenClientException();
         }
 
-        // Check if the electricity meter exists
-        ElecMeterDao elecMeterDao = new ElecMeterDao();
-        ElecMeter elecMeter = elecMeterDao.getActiveById(id);
-        if (elecMeter == null) {
-            throw new ClientException("ElecMeterNotFound", "The electricity meter doesn't exist");
+        // Check if the sensor exists
+        SensorDao sensorDao = new SensorDao();
+        Sensor sensor = sensorDao.getActiveById(id);
+        if (sensor == null) {
+            throw new ClientException("SensorNotFound", "The sensor doesn't exist");
         }
         
         // Get all samples
-        List<ElecMeterSample> sampleList = elecMeterDao.findAllSample(id);
+        List<SensorSample> sampleList = sensorDao.findAllSample(id);
 
         JsonArrayBuilder samples = Json.createArrayBuilder();
-        for (ElecMeterSample sample : sampleList) {
+        for (SensorSample sample : sampleList) {
             samples.add(Json.createObjectBuilder()
                     .add("date", sample.getCreateDate().getTime())
                     .add("value", sample.getValue()));
@@ -170,8 +170,8 @@ public class ElecMeterResource extends BaseResource {
         
         // Build the output
         JsonObject json = Json.createObjectBuilder()
-                .add("id", elecMeter.getId())
-                .add("name", elecMeter.getName())
+                .add("id", sensor.getId())
+                .add("name", sensor.getName())
                 .add("samples", samples)
                 .build();
 
@@ -182,7 +182,7 @@ public class ElecMeterResource extends BaseResource {
     }
 
     /**
-     * Deletes an electricity meter.
+     * Deletes a sensor.
      *
      * @param id ID
      * @return Response
@@ -196,15 +196,15 @@ public class ElecMeterResource extends BaseResource {
         }
         checkBaseFunction(BaseFunction.ADMIN);
 
-        // Check if the electricity meter exists
-        ElecMeterDao elecMeterDao = new ElecMeterDao();
-        ElecMeter elecMeter = elecMeterDao.getActiveById(id);
-        if (elecMeter == null) {
-            throw new ClientException("ElecMeterNotFound", "The electricity meter doesn't exist");
+        // Check if the sensor exists
+        SensorDao sensorDao = new SensorDao();
+        Sensor sensor = sensorDao.getActiveById(id);
+        if (sensor == null) {
+            throw new ClientException("SensorNotFound", "The sensor doesn't exist");
         }
 
-        // Delete the electricity meter
-        elecMeterDao.delete(elecMeter.getId());
+        // Delete the sensor
+        sensorDao.delete(sensor.getId());
 
         // Always return OK
         return Response.ok()
@@ -213,7 +213,7 @@ public class ElecMeterResource extends BaseResource {
     }
 
     /**
-     * Returns all active electricity meters.
+     * Returns all active sensors.
      *
      * @return Response
      */
@@ -225,17 +225,17 @@ public class ElecMeterResource extends BaseResource {
         }
         checkBaseFunction(BaseFunction.ADMIN);
 
-        ElecMeterDao elecMeterDao = new ElecMeterDao();
-        List<ElecMeter> elecMeterList = elecMeterDao.findAll();
+        SensorDao sensorDao = new SensorDao();
+        List<Sensor> sensorList = sensorDao.findAll();
 
         JsonObjectBuilder response = Json.createObjectBuilder();
         JsonArrayBuilder items = Json.createArrayBuilder();
-        for (ElecMeter elecMeter : elecMeterList) {
+        for (Sensor sensor : sensorList) {
             items.add(Json.createObjectBuilder()
-                    .add("id", elecMeter.getId())
-                    .add("name", elecMeter.getName()));
+                    .add("id", sensor.getId())
+                    .add("name", sensor.getName()));
         }
-        response.add("elec_meters", items);
+        response.add("sensors", items);
 
         return Response.ok().entity(response.build()).build();
     }

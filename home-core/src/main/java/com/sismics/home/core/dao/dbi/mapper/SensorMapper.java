@@ -5,33 +5,33 @@ import java.sql.SQLException;
 
 import org.skife.jdbi.v2.StatementContext;
 
-import com.sismics.home.core.model.dbi.ElecMeterSample;
+import com.sismics.home.core.model.dbi.Sensor;
 import com.sismics.util.dbi.BaseResultSetMapper;
 
 /**
- * Electricity meter sample result set mapper.
+ * Sensor result set mapper.
  *
  * @author bgamard
  */
-public class ElecMeterSampleMapper extends BaseResultSetMapper<ElecMeterSample> {
+public class SensorMapper extends BaseResultSetMapper<Sensor> {
     @Override
     public String[] getColumns() {
         return new String[] {
-            "EMS_ID_C",
-            "EMS_IDEMR_C",
-            "EMS_CREATEDATE_D",
-            "EMS_VALUE_N"
+            "SEN_ID_C",
+            "SEN_NAME_C",
+            "SEN_CREATEDATE_D",
+            "SEN_DELETEDATE_D"
         };
     }
     
     @Override
-    public ElecMeterSample map(int index, ResultSet r, StatementContext ctx) throws SQLException {
+    public Sensor map(int index, ResultSet r, StatementContext ctx) throws SQLException {
         final String[] columns = getColumns();
         int column = 0;
-        return new ElecMeterSample(
+        return new Sensor(
                 r.getString(columns[column++]),
                 r.getString(columns[column++]),
                 r.getTimestamp(columns[column++]),
-                r.getInt(columns[column++]));
+                r.getTimestamp(columns[column++]));
     }
 }

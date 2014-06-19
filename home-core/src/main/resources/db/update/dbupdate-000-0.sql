@@ -4,13 +4,13 @@ create memory table T_CONFIG ( CFG_ID_C varchar(50) not null, CFG_VALUE_C varcha
 create memory table T_ROLE ( ROL_ID_C varchar(36) not null, ROL_NAME_C varchar(50) not null, ROL_CREATEDATE_D datetime not null, ROL_DELETEDATE_D datetime, primary key (ROL_ID_C) );
 create memory table T_ROLE_BASE_FUNCTION ( RBF_ID_C varchar(36) not null, RBF_IDROLE_C varchar(36), RBF_IDBASEFUNCTION_C varchar(20) not null, RBF_CREATEDATE_D datetime not null, RBF_DELETEDATE_D datetime, primary key (RBF_ID_C) );
 create memory table T_USER ( USE_ID_C varchar(36) not null, USE_IDROLE_C varchar(36) not null, USE_USERNAME_C varchar(50) not null, USE_PASSWORD_C varchar(60) not null, USE_EMAIL_C varchar(100) not null, USE_FIRSTCONNECTION_B bit default 0 not null, USE_CREATEDATE_D datetime not null, USE_DELETEDATE_D datetime, primary key (USE_ID_C) );
-create memory table T_ELEC_METER ( EMR_ID_C varchar(36) not null, EMR_NAME_C varchar(50) not null, EMR_CREATEDATE_D datetime not null, EMR_DELETEDATE_D datetime, primary key (EMR_ID_C) );
-create cached table T_ELEC_METER_SAMPLE ( EMS_ID_C varchar(36) not null, EMS_IDEMR_C varchar(36) not null, EMS_VALUE_N int not null, EMS_CREATEDATE_D datetime not null, primary key (EMS_ID_C) );
+create memory table T_SENSOR ( SEN_ID_C varchar(36) not null, SEN_NAME_C varchar(50) not null, SEN_CREATEDATE_D datetime not null, SEN_DELETEDATE_D datetime, primary key (SEN_ID_C) );
+create cached table T_SENSOR_SAMPLE ( SES_ID_C varchar(36) not null, SES_IDSEN_C varchar(36) not null, SES_VALUE_N float not null, SES_CREATEDATE_D datetime not null, primary key (SES_ID_C) );
 alter table T_AUTHENTICATION_TOKEN add constraint FK_AUT_IDUSER_C foreign key (AUT_IDUSER_C) references T_USER (USE_ID_C) on delete restrict on update restrict;
 alter table T_ROLE_BASE_FUNCTION add constraint FK_RBF_IDBASEFUNCTION_C foreign key (RBF_IDBASEFUNCTION_C) references T_BASE_FUNCTION (BAF_ID_C) on delete restrict on update restrict;
 alter table T_ROLE_BASE_FUNCTION add constraint FK_RBF_IDROLE_C foreign key (RBF_IDROLE_C) references T_ROLE (ROL_ID_C) on delete restrict on update restrict;
 alter table T_USER add constraint FK_USE_IDROLE_C foreign key (USE_IDROLE_C) references T_ROLE (ROL_ID_C) on delete restrict on update restrict;
-alter table T_ELEC_METER_SAMPLE add constraint FK_EMS_IDEMR_C foreign key (EMS_IDEMR_C) references T_ELEC_METER (EMR_ID_C) on delete restrict on update restrict;
+alter table T_SENSOR_SAMPLE add constraint FK_SES_IDSEN_C foreign key (SES_IDSEN_C) references T_SENSOR (SEN_ID_C) on delete restrict on update restrict;
 insert into T_CONFIG(CFG_ID_C, CFG_VALUE_C) values('DB_VERSION', '0');
 insert into T_BASE_FUNCTION(BAF_ID_C) values('ADMIN');
 insert into T_BASE_FUNCTION(BAF_ID_C) values('PASSWORD');
@@ -20,4 +20,4 @@ insert into T_ROLE_BASE_FUNCTION(RBF_ID_C, RBF_IDROLE_C, RBF_IDBASEFUNCTION_C, R
 insert into T_ROLE(ROL_ID_C, ROL_NAME_C, ROL_CREATEDATE_D) values('user', 'User', NOW());
 insert into T_ROLE_BASE_FUNCTION(RBF_ID_C, RBF_IDROLE_C, RBF_IDBASEFUNCTION_C, RBF_CREATEDATE_D) values('user_PASSWORD', 'user', 'PASSWORD', NOW());
 insert into T_USER(USE_ID_C, USE_IDROLE_C, USE_USERNAME_C, USE_PASSWORD_C, USE_EMAIL_C, USE_FIRSTCONNECTION_B, USE_CREATEDATE_D) values('admin', 'admin', 'admin', '$2a$05$6Ny3TjrW3aVAL1or2SlcR.fhuDgPKp5jp.P9fBXwVNePgeLqb4i3C', 'admin@localhost', true, NOW());
-insert into T_ELEC_METER(EMR_ID_C, EMR_NAME_C, EMR_CREATEDATE_D) values('main', 'Main electricity meter', NOW());
+insert into T_SENSOR(SEN_ID_C, SEN_NAME_C, SEN_CREATEDATE_D) values('main_elec', 'Main electricity meter', NOW());

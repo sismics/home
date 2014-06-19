@@ -13,90 +13,87 @@ import org.junit.Test;
 import com.sismics.util.filter.TokenBasedSecurityFilter;
 
 /**
- * Exhaustive test of the electricity meter resource.
+ * Exhaustive test of the sensor resource.
  * 
  * @author bgamard
  */
-public class TestElecMeterResource extends BaseJerseyTest {
+public class TestSensorResource extends BaseJerseyTest {
     /**
-     * Test the electricity meter resource.
+     * Test the sensor resource.
      *
      * @throws JSONException
      */
     @Test
-    public void testElecMeterResource() {
+    public void testSensorResource() {
         // Login admin
         String adminAuthenticationToken = clientUtil.login("admin", "admin", false);
 
-        // List all electricity meters
-        JsonObject json = target().path("/elec_meter").request()
+        // List all sensors
+        JsonObject json = target().path("/sensor").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
                 .get(JsonObject.class);
-        JsonArray elecMeters = json.getJsonArray("elec_meters");
-        Assert.assertEquals(0, elecMeters.size());
+        JsonArray sensors = json.getJsonArray("sensors");
+        Assert.assertEquals(1, sensors.size());
 
-        // Create an electricity meter
-        json = target().path("/elec_meter").request()
+        // Create a sensor
+        json = target().path("/sensor").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
                 .put(Entity.form(new Form()
-                        .param("name", "main")), JsonObject.class);
+                        .param("name", "First sensor")), JsonObject.class);
         Assert.assertEquals("ok", json.getString("status"));
 
-        // List all electricity meters
-        json = target().path("/elec_meter").request()
+        // List all sensors
+        json = target().path("/sensor").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
                 .get(JsonObject.class);
-        elecMeters = json.getJsonArray("elec_meters");
-        Assert.assertEquals(1, elecMeters.size());
-        JsonObject elecMeter0 = elecMeters.getJsonObject(0);
-        String elecMeter0Id = elecMeter0.getString("id");
-        Assert.assertEquals("main", elecMeter0.getString("name"));
+        sensors = json.getJsonArray("sensors");
+        Assert.assertEquals(2, sensors.size());
+        JsonObject sensor0 = sensors.getJsonObject(0);
+        String sensor0Id = sensor0.getString("id");
+        Assert.assertEquals("First sensor", sensor0.getString("name"));
 
-        // Update an electricity meter
-        json = target().path("/elec_meter/" + elecMeter0Id).request()
+        // Update a sensor
+        json = target().path("/sensor/" + sensor0Id).request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
                 .post(Entity.form(new Form()
-                        .param("name", "heating")), JsonObject.class);
+                        .param("name", "Temp meter")), JsonObject.class);
         Assert.assertEquals("ok", json.getString("status"));
 
         // Check the update
-        json = target().path("/elec_meter").request()
+        json = target().path("/sensor/" + sensor0Id).request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
                 .get(JsonObject.class);
-        elecMeters = json.getJsonArray("elec_meters");
-        Assert.assertEquals(1, elecMeters.size());
-        elecMeter0 = elecMeters.getJsonObject(0);
-        Assert.assertEquals("heating", elecMeter0.getString("name"));
+        Assert.assertEquals("Temp meter", json.getString("name"));
 
-        // Add a sample to the electricity meter
+        // Add a sample to the sensor
         long date = new Date().getTime();
-        json = target().path("/elec_meter/" + elecMeter0Id + "/sample").request()
+        json = target().path("/sensor/" + sensor0Id + "/sample").request()
                 .put(Entity.form(new Form()
                         .param("date", "" + date)
                         .param("value", "254")), JsonObject.class);
         Assert.assertEquals("ok", json.getString("status"));
         
-        // Get the electricity meter
-        json = target().path("/elec_meter/" + elecMeter0Id).request()
+        // Get the sensor
+        json = target().path("/sensor/" + sensor0Id).request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
                 .get(JsonObject.class);
-        Assert.assertEquals("heating", json.getString("name"));
+        Assert.assertEquals("Temp meter", json.getString("name"));
         JsonArray samples = json.getJsonArray("samples");
         Assert.assertEquals(1, samples.size());
         Assert.assertEquals(date, samples.getJsonObject(0).getJsonNumber("date").longValue());
         Assert.assertEquals(254, samples.getJsonObject(0).getInt("value"));
         
-        // Delete the electricity meter
-        json = target().path("/elec_meter/" + elecMeter0Id).request()
+        // Delete the sensor
+        json = target().path("/sensor/" + sensor0Id).request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
                 .delete(JsonObject.class);
         Assert.assertEquals("ok", json.getString("status"));
 
         // Check the deletion
-        json = target().path("/elec_meter").request()
+        json = target().path("/sensor").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
                 .get(JsonObject.class);
-        elecMeters = json.getJsonArray("elec_meters");
-        Assert.assertEquals(0, elecMeters.size());
+        sensors = json.getJsonArray("sensors");
+        Assert.assertEquals(1, sensors.size());
     }
 }

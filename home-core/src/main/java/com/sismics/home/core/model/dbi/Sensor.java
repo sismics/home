@@ -9,7 +9,7 @@ import java.util.Date;
  * 
  * @author bgamard
  */
-public class ElecMeter {
+public class Sensor {
     /**
      * ID.
      */
@@ -30,10 +30,10 @@ public class ElecMeter {
      */
     private Date deleteDate;
 
-    public ElecMeter() {
+    public Sensor() {
     }
 
-    public ElecMeter(String id, String name, Date createDate, Date deleteDate) {
+    public Sensor(String id, String name, Date createDate, Date deleteDate) {
         this.id = id;
         this.name = name;
         this.createDate = createDate;

@@ -9,7 +9,7 @@ import java.util.Date;
  * 
  * @author bgamard
  */
-public class ElecMeterSample {
+public class SensorSample {
     /**
      * ID.
      */
@@ -18,24 +18,24 @@ public class ElecMeterSample {
     /**
      * Electricity meter ID.
      */
-    private String elecMeterId;
+    private String sensorId;
     
     /**
      * Value.
      */
-    private int value;
+    private float value;
     
     /**
      * Creation date.
      */
     private Date createDate;
     
-    public ElecMeterSample() {
+    public SensorSample() {
     }
 
-    public ElecMeterSample(String id, String elecMeterId, Date createDate, int value) {
+    public SensorSample(String id, String elecMeterId, Date createDate, float value) {
         this.id = id;
-        this.elecMeterId = elecMeterId;
+        this.sensorId = elecMeterId;
         this.createDate = createDate;
         this.value = value;
     }
@@ -77,21 +77,21 @@ public class ElecMeterSample {
     }
     
     /**
-     * Getter of elecMeterId.
+     * Getter of sensorId.
      *
-     * @return the elecMeterId
+     * @return the sensorId
      */
-    public String getElecMeterId() {
-        return elecMeterId;
+    public String getSensorId() {
+        return sensorId;
     }
 
     /**
-     * Setter of elecMeterId.
+     * Setter of sensorId.
      *
-     * @param elecMeterId elecMeterId
+     * @param sensorId sensorId
      */
-    public void setElecMeterId(String elecMeterId) {
-        this.elecMeterId = elecMeterId;
+    public void setSensorId(String sensorId) {
+        this.sensorId = sensorId;
     }
 
     /**
@@ -99,7 +99,7 @@ public class ElecMeterSample {
      *
      * @return the value
      */
-    public int getValue() {
+    public float getValue() {
         return value;
     }
 
@@ -108,7 +108,7 @@ public class ElecMeterSample {
      *
      * @param value value
      */
-    public void setValue(int value) {
+    public void setValue(float value) {
         this.value = value;
     }
 
