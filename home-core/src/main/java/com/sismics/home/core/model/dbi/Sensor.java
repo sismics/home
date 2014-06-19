@@ -5,11 +5,29 @@ import com.google.common.base.Objects;
 import java.util.Date;
 
 /**
- * Electricity meter.
+ * Sensor.
  * 
  * @author bgamard
  */
 public class Sensor {
+    
+    /**
+     * Sensor type.
+     * 
+     * @author bgamard
+     */
+    public enum Type {
+        ELECTRICITY,
+        
+        TEMPERATURE,
+        
+        HUMIDITY,
+        
+        SOUND,
+        
+        LIGHT
+    }
+    
     /**
      * ID.
      */
@@ -19,6 +37,11 @@ public class Sensor {
      * Name.
      */
     private String name;
+    
+    /**
+     * Type.
+     */
+    private Type type;
     
     /**
      * Creation date.
@@ -33,11 +56,12 @@ public class Sensor {
     public Sensor() {
     }
 
-    public Sensor(String id, String name, Date createDate, Date deleteDate) {
+    public Sensor(String id, String name, Date createDate, Date deleteDate, Type type) {
         this.id = id;
         this.name = name;
         this.createDate = createDate;
         this.deleteDate = deleteDate;
+        this.type = type;
     }
 
     /**
@@ -111,12 +135,29 @@ public class Sensor {
     public void setDeleteDate(Date deleteDate) {
         this.deleteDate = deleteDate;
     }
+    
+    /**
+     * Getter of type.
+     * @return type
+     */
+    public Type getType() {
+        return type;
+    }
+
+    /**
+     * Setter of type.
+     * @param type type
+     */
+    public void setType(Type type) {
+        this.type = type;
+    }
 
     @Override
     public String toString() {
         return Objects.toStringHelper(this)
                 .add("id", id)
                 .add("name", name)
+                .add("type", type)
                 .toString();
     }
 }

@@ -34,10 +34,11 @@ public class SensorDao {
         // Create sensor
         final Handle handle = ThreadLocalContext.get().getHandle();
         handle.createStatement("insert into " +
-                " T_SENSOR(SEN_ID_C, SEN_NAME_C, SEN_CREATEDATE_D)" +
-                " values(:id, :name, :createDate)")
+                " T_SENSOR(SEN_ID_C, SEN_NAME_C, SEN_TYPE_C, SEN_CREATEDATE_D)" +
+                " values(:id, :name, :type, :createDate)")
                 .bind("id", sensor.getId())
                 .bind("name", sensor.getName())
+                .bind("type", sensor.getType().name())
                 .bind("createDate", sensor.getCreateDate())
                 .execute();
 
@@ -76,10 +77,12 @@ public class SensorDao {
     public Sensor update(Sensor sensor) {
         final Handle handle = ThreadLocalContext.get().getHandle();
         handle.createStatement("update T_SENSOR e set " +
-                " e.SEN_NAME_C = :name " +
+                " e.SEN_NAME_C = :name, " +
+                " e.SEN_TYPE_C = :type " +
                 " where e.SEN_ID_C = :id and e.SEN_DELETEDATE_D is null")
                 .bind("id", sensor.getId())
                 .bind("name", sensor.getName())
+                .bind("type", sensor.getType().name())
                 .execute();
 
         return sensor;

@@ -39,7 +39,8 @@ public class TestSensorResource extends BaseJerseyTest {
         json = target().path("/sensor").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
                 .put(Entity.form(new Form()
-                        .param("name", "First sensor")), JsonObject.class);
+                        .param("name", "First sensor")
+                        .param("type", "ELECTRICITY")), JsonObject.class);
         Assert.assertEquals("ok", json.getString("status"));
 
         // List all sensors
@@ -51,12 +52,14 @@ public class TestSensorResource extends BaseJerseyTest {
         JsonObject sensor0 = sensors.getJsonObject(0);
         String sensor0Id = sensor0.getString("id");
         Assert.assertEquals("First sensor", sensor0.getString("name"));
+        Assert.assertEquals("ELECTRICITY", sensor0.getString("type"));
 
         // Update a sensor
         json = target().path("/sensor/" + sensor0Id).request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
                 .post(Entity.form(new Form()
-                        .param("name", "Temp meter")), JsonObject.class);
+                        .param("name", "Temp meter")
+                        .param("type", "TEMPERATURE")), JsonObject.class);
         Assert.assertEquals("ok", json.getString("status"));
 
         // Check the update
@@ -64,13 +67,14 @@ public class TestSensorResource extends BaseJerseyTest {
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
                 .get(JsonObject.class);
         Assert.assertEquals("Temp meter", json.getString("name"));
+        Assert.assertEquals("TEMPERATURE", json.getString("type"));
 
         // Add a sample to the sensor
         long date = new Date().getTime();
         json = target().path("/sensor/" + sensor0Id + "/sample").request()
                 .put(Entity.form(new Form()
                         .param("date", "" + date)
-                        .param("value", "254")), JsonObject.class);
+                        .param("value", "254.5")), JsonObject.class);
         Assert.assertEquals("ok", json.getString("status"));
         
         // Get the sensor

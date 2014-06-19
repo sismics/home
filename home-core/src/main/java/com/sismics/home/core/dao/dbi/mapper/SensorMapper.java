@@ -20,7 +20,8 @@ public class SensorMapper extends BaseResultSetMapper<Sensor> {
             "SEN_ID_C",
             "SEN_NAME_C",
             "SEN_CREATEDATE_D",
-            "SEN_DELETEDATE_D"
+            "SEN_DELETEDATE_D",
+            "SEN_TYPE_C"
         };
     }
     
@@ -32,6 +33,7 @@ public class SensorMapper extends BaseResultSetMapper<Sensor> {
                 r.getString(columns[column++]),
                 r.getString(columns[column++]),
                 r.getTimestamp(columns[column++]),
-                r.getTimestamp(columns[column++]));
+                r.getTimestamp(columns[column++]),
+                Sensor.Type.valueOf(r.getString(columns[column++])));
     }
 }

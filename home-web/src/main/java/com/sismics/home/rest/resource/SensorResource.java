@@ -20,6 +20,7 @@ import javax.ws.rs.core.Response;
 
 import com.sismics.home.core.dao.dbi.SensorDao;
 import com.sismics.home.core.model.dbi.Sensor;
+import com.sismics.home.core.model.dbi.Sensor.Type;
 import com.sismics.home.core.model.dbi.SensorSample;
 import com.sismics.home.rest.constant.BaseFunction;
 import com.sismics.rest.exception.ClientException;
@@ -42,7 +43,8 @@ public class SensorResource extends BaseResource {
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
     public Response create(
-            @FormParam("name") String name) {
+            @FormParam("name") String name,
+            @FormParam("type") String typeStr) {
 
         if (!authenticate()) {
             throw new ForbiddenClientException();
@@ -51,10 +53,13 @@ public class SensorResource extends BaseResource {
 
         // Validate the input data
         name = ValidationUtil.validateLength(name, "name", 1, 100);
+        ValidationUtil.validateRequired(typeStr, "type");
+        Type type = Type.valueOf(typeStr);
 
         // Create the electricity meter
         Sensor sensor = new Sensor();
         sensor.setName(name);
+        sensor.setType(type);
 
         SensorDao sensorDao = new SensorDao();
         sensorDao.create(sensor);
@@ -77,7 +82,7 @@ public class SensorResource extends BaseResource {
     public Response createSample(
             @PathParam("id") String id,
             @FormParam("date") String dateStr,
-            @FormParam("value") Integer value) {
+            @FormParam("value") Float value) {
         // Check if the sensor exists
         SensorDao sensorDao = new SensorDao();
         Sensor sensor = sensorDao.getActiveById(id);
@@ -115,7 +120,8 @@ public class SensorResource extends BaseResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response update(
             @PathParam("id") String id,
-            @FormParam("name") String name) {
+            @FormParam("name") String name,
+            @FormParam("type") String typeStr) {
 
         if (!authenticate()) {
             throw new ForbiddenClientException();
@@ -124,11 +130,14 @@ public class SensorResource extends BaseResource {
 
         // Validate the input data
         name = ValidationUtil.validateLength(name, "name", 1, 100);
+        ValidationUtil.validateRequired(typeStr, "type");
+        Type type = Type.valueOf(typeStr);
 
         // Update the sensor
         SensorDao sensorDao = new SensorDao();
         Sensor sensor = sensorDao.getActiveById(id);
         sensor.setName(name);
+        sensor.setType(type);
         sensor = sensorDao.update(sensor);
 
         // Always return OK
@@ -172,6 +181,7 @@ public class SensorResource extends BaseResource {
         JsonObject json = Json.createObjectBuilder()
                 .add("id", sensor.getId())
                 .add("name", sensor.getName())
+                .add("type", sensor.getType().name())
                 .add("samples", samples)
                 .build();
 
@@ -233,7 +243,8 @@ public class SensorResource extends BaseResource {
         for (Sensor sensor : sensorList) {
             items.add(Json.createObjectBuilder()
                     .add("id", sensor.getId())
-                    .add("name", sensor.getName()));
+                    .add("name", sensor.getName())
+                    .add("type", sensor.getType().name()));
         }
         response.add("sensors", items);
 

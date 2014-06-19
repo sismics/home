@@ -5,7 +5,7 @@ import com.google.common.base.Objects;
 import java.util.Date;
 
 /**
- * Electricity meter sample.
+ * Sensor sample.
  * 
  * @author bgamard
  */
@@ -16,7 +16,7 @@ public class SensorSample {
     private String id;
     
     /**
-     * Electricity meter ID.
+     * Sensor ID.
      */
     private String sensorId;
     
