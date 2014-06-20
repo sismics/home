@@ -6,7 +6,7 @@
 angular.module('home').controller('Main', function($scope, Restangular) {
   $scope.data = [];
 
-  Restangular.one('elec_meter', 'main').get().then(function(data) {
+  Restangular.one('sensor', 'main-elec').get().then(function(data) {
     _(data.samples).each(function(sample) {
       $scope.data.push([sample.date, sample.value]);
     });

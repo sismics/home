@@ -24,7 +24,7 @@ angular.module('home',
             }
           })
           .state('main', {
-            url: '/',
+            url: '',
             views: {
               'page': {
                 templateUrl: 'partial/main.html',
