@@ -1,6 +1,7 @@
 {
   "name": "cc128-sismics-home-client",
   "description": "CC128 Client for Sismics Home",
+  "version": "0.0.1",
   "author": "Benjamin Gamard <benjamin.gam@gmail.com>",
   "dependencies": {
     "ccxmleventemitter": "0.9.9-beta",

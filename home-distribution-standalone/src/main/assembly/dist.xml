@@ -7,18 +7,18 @@
     <file>
       <source>target/${project.artifactId}-${project.version}-jar-with-dependencies.jar</source>
       <outputDirectory>/</outputDirectory>
-      <destName>reader-standalone.jar</destName>
+      <destName>home-standalone.jar</destName>
     </file>
     <file>
-      <source>target/sismicsreader.war</source>
+      <source>target/sismicshome.war</source>
       <outputDirectory>/</outputDirectory>
     </file>
     <file>
-      <source>src/main/assembly/reader.bat</source>
+      <source>src/main/assembly/home.bat</source>
       <outputDirectory>/</outputDirectory>
     </file>
     <file>
-      <source>src/main/assembly/reader.sh</source>
+      <source>src/main/assembly/home.sh</source>
       <outputDirectory>/</outputDirectory>
       <lineEnding>unix</lineEnding>
       <fileMode>0755</fileMode>

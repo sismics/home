@@ -1,8 +1,9 @@
 package com.sismics.home.core.model.dbi;
 
-import com.google.common.base.Objects;
-
 import java.util.Date;
+
+import com.google.common.base.Objects;
+import com.sismics.home.core.constant.SensorSampleType;
 
 /**
  * Sensor sample.
@@ -30,14 +31,20 @@ public class SensorSample {
      */
     private Date createDate;
     
+    /**
+     * Type.
+     */
+    private SensorSampleType type;
+    
     public SensorSample() {
     }
 
-    public SensorSample(String id, String elecMeterId, Date createDate, float value) {
+    public SensorSample(String id, String sensorId, Date createDate, float value, SensorSampleType type) {
         this.id = id;
-        this.sensorId = elecMeterId;
+        this.sensorId = sensorId;
         this.createDate = createDate;
         this.value = value;
+        this.type = type;
     }
 
     /**
@@ -112,11 +119,31 @@ public class SensorSample {
         this.value = value;
     }
 
+    /**
+     * Getter of type.
+     *
+     * @return the type
+     */
+    public SensorSampleType getType() {
+        return type;
+    }
+
+    /**
+     * Setter of type.
+     *
+     * @param type type
+     */
+    public void setType(SensorSampleType type) {
+        this.type = type;
+    }
+
     @Override
     public String toString() {
         return Objects.toStringHelper(this)
                 .add("id", id)
                 .add("value", value)
+                .add("createDate", createDate)
+                .add("type", type)
                 .toString();
     }
 }

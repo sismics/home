@@ -5,6 +5,7 @@ import java.sql.SQLException;
 
 import org.skife.jdbi.v2.StatementContext;
 
+import com.sismics.home.core.constant.SensorSampleType;
 import com.sismics.home.core.model.dbi.SensorSample;
 import com.sismics.util.dbi.BaseResultSetMapper;
 
@@ -20,7 +21,8 @@ public class SensorSampleMapper extends BaseResultSetMapper<SensorSample> {
             "SES_ID_C",
             "SES_IDSEN_C",
             "SES_CREATEDATE_D",
-            "SES_VALUE_N"
+            "SES_VALUE_N",
+            "SES_TYPE_C"
         };
     }
     
@@ -32,6 +34,7 @@ public class SensorSampleMapper extends BaseResultSetMapper<SensorSample> {
                 r.getString(columns[column++]),
                 r.getString(columns[column++]),
                 r.getTimestamp(columns[column++]),
-                r.getFloat(columns[column++]));
+                r.getFloat(columns[column++]),
+                SensorSampleType.valueOf(r.getString(columns[column++])));
     }
 }

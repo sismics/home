@@ -18,6 +18,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.sismics.home.core.constant.SensorSampleType;
 import com.sismics.home.core.dao.dbi.SensorDao;
 import com.sismics.home.core.model.dbi.Sensor;
 import com.sismics.home.core.model.dbi.Sensor.Type;
@@ -62,11 +63,14 @@ public class SensorResource extends BaseResource {
         sensor.setType(type);
 
         SensorDao sensorDao = new SensorDao();
-        sensorDao.create(sensor);
+        String sensorId = sensorDao.create(sensor);
 
         // Always return OK
         return Response.ok()
-                .entity(Json.createObjectBuilder().add("status", "ok").build())
+                .entity(Json.createObjectBuilder()
+                        .add("status", "ok")
+                        .add("id", sensorId)
+                        .build())
                 .build();
     }
 
@@ -99,6 +103,7 @@ public class SensorResource extends BaseResource {
         sample.setCreateDate(date);
         sample.setValue(value);
         sample.setSensorId(id);
+        sample.setType(SensorSampleType.RAW);
 
         sensorDao.createSample(sample);
 

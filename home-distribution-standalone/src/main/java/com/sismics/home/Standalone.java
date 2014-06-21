@@ -7,7 +7,7 @@ import org.eclipse.jetty.server.nio.SelectChannelConnector;
 import org.eclipse.jetty.webapp.WebAppContext;
 
 /**
- * Reader standalone launcher with an embedded Jetty.
+ * Home standalone launcher with an embedded Jetty.
  *
  * @author jtremeaux
  */
@@ -34,7 +34,7 @@ public class Standalone {
         SelectChannelConnector connector = new SelectChannelConnector();
         
         // Set host
-        String host = System.getProperty("reader.host");
+        String host = System.getProperty("home.host");
         if (host != null && !host.trim().isEmpty()) {
             connector.setHost(host.trim());
         }
@@ -44,7 +44,7 @@ public class Standalone {
         int port = DEFAULT_PORT;
         String portString = null;
         try {
-            portString = System.getProperty("reader.port");
+            portString = System.getProperty("home.port");
             if (portString != null && !portString.trim().isEmpty()) {
                 port = Integer.parseInt(portString);
             }
@@ -55,7 +55,7 @@ public class Standalone {
         
         // Set the War
         WebAppContext webapp = new WebAppContext();
-        webapp.setWar("sismicsreader.war");
+        webapp.setWar("sismicshome.war");
 
         // Set the context path
         String contextPath = System.getProperty("home.contextPath");

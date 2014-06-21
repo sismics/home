@@ -10,6 +10,7 @@ import java.util.concurrent.TimeUnit;
 import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.EventBus;
 import com.sismics.home.core.listener.sync.DeadEventListener;
+import com.sismics.home.core.service.SensorService;
 import com.sismics.util.EnvironmentUtil;
 
 /**
@@ -34,6 +35,11 @@ public class AppContext {
     private EventBus asyncEventBus;
 
     /**
+     * Sensor service.
+     */
+    private SensorService sensorService;
+    
+    /**
      * Asynchronous executors.
      */
     private List<ExecutorService> asyncExecutorList;
@@ -43,6 +49,9 @@ public class AppContext {
      */
     private AppContext() {
         resetEventBus();
+        
+        sensorService = new SensorService();
+        sensorService.startAsync();
     }
     
     /**
@@ -102,5 +111,14 @@ public class AppContext {
      */
     public EventBus getAsyncEventBus() {
         return asyncEventBus;
+    }
+
+    /**
+     * Getter of sensorService.
+     *
+     * @return the sensorService
+     */
+    public SensorService getSensorService() {
+        return sensorService;
     }
 }
