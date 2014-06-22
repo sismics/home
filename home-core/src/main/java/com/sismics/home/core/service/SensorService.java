@@ -7,6 +7,8 @@ import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeFieldType;
+import org.joda.time.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,6 +17,7 @@ import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.AbstractScheduledService;
 import com.sismics.home.core.constant.SensorSampleType;
 import com.sismics.home.core.dao.dbi.SensorDao;
+import com.sismics.home.core.dao.dbi.SensorSampleDao;
 import com.sismics.home.core.model.dbi.Sensor;
 import com.sismics.home.core.model.dbi.SensorSample;
 import com.sismics.home.core.util.TransactionUtil;
@@ -65,42 +68,58 @@ public class SensorService extends AbstractScheduledService {
      * Compact sensors data.
      */
     public void compactSensors() {
+        compactSensors(Duration.standardMinutes(2), DateTimeFieldType.minuteOfHour(), SensorSampleType.RAW, SensorSampleType.MINUTE);
+        compactSensors(Duration.standardHours(6), DateTimeFieldType.hourOfDay(), SensorSampleType.MINUTE, SensorSampleType.HOUR);
+        compactSensors(Duration.standardDays(30), DateTimeFieldType.dayOfMonth(), SensorSampleType.HOUR, SensorSampleType.DAY);
+    }
+
+    /**
+     * Compact sensors data.
+     * 
+     * @param beforeDuration Compact all sample before this duration
+     * @param dateTimeFieldType Field type to round on
+     * @param fromSensorSampleType Sample type to compact
+     * @param toSensorSampleType Sample type to create
+     */
+    private void compactSensors(Duration beforeDuration, DateTimeFieldType dateTimeFieldType, SensorSampleType fromSensorSampleType, SensorSampleType toSensorSampleType) {
         SensorDao sensorDao = new SensorDao();
+        SensorSampleDao sensorSampleDao = new SensorSampleDao();
         List<Sensor> sensorList = sensorDao.findAll();
-        Date rawDate = DateTime.now().minuteOfHour().roundFloorCopy().minusMinutes(2).toDate();
+        Date beforeDate = DateTime.now().property(dateTimeFieldType).roundFloorCopy().minus(beforeDuration).toDate();
+        log.info("Compacting all " + fromSensorSampleType + " samples before: " + beforeDate);
         
         for (Sensor sensor : sensorList) {
-            // Every minute, compact all (RAW) samples which are 2 minutes old by minutly packs (MINUTE)
-            List<SensorSample> rawSampleList = sensorDao.getRawSamplesBefore(sensor.getId(), rawDate);
-            Map<Date, List<Float>> minuteSampleMap = Maps.newHashMap();
-            List<String> rawSampleIdList = Lists.newArrayList();
-            for (SensorSample rawSample : rawSampleList) {
-                rawSampleIdList.add(rawSample.getId());
-                Date minuteDate = new DateTime(rawSample.getCreateDate()).minuteOfHour().roundFloorCopy().toDate();
-                if (minuteSampleMap.containsKey(minuteDate)) {
-                    minuteSampleMap.get(minuteDate).add(rawSample.getValue());
+            // Compact all fromSensorSampleType samples which are beforeDuration old by toSensorSampleType packs
+            List<SensorSample> sampleList = sensorSampleDao.findAllBefore(sensor.getId(), beforeDate, fromSensorSampleType);
+            log.info(sampleList.size() + " " + fromSensorSampleType + " samples to compact for sensor: " + sensor);
+            
+            Map<Date, List<Float>> sampleMap = Maps.newHashMap();
+            List<String> sampleIdList = Lists.newArrayList();
+            for (SensorSample sample : sampleList) {
+                sampleIdList.add(sample.getId());
+                Date date = new DateTime(sample.getCreateDate()).property(dateTimeFieldType).roundFloorCopy().toDate();
+                if (sampleMap.containsKey(date)) {
+                    sampleMap.get(date).add(sample.getValue());
                 } else {
-                    minuteSampleMap.put(minuteDate, Lists.newArrayList(rawSample.getValue()));
+                    sampleMap.put(date, Lists.newArrayList(sample.getValue()));
                 }
             }
             
             // Create new samples
-            for (Entry<Date, List<Float>> entry : minuteSampleMap.entrySet()) {
+            log.info(fromSensorSampleType + " samples compacted into " + sampleMap.size() + " " + toSensorSampleType + " samples");
+            for (Entry<Date, List<Float>> entry : sampleMap.entrySet()) {
                 float mean = 0;
                 for (Float value : entry.getValue()) {
                     mean += value;
                 }
                 mean /= entry.getValue().size();
                 SensorSample sensorSample =
-                        new SensorSample(null, sensor.getId(), entry.getKey(), mean, SensorSampleType.MINUTE);
-                sensorDao.createSample(sensorSample);
+                        new SensorSample(null, sensor.getId(), entry.getKey(), mean, toSensorSampleType);
+                sensorSampleDao.create(sensorSample);
             }
             
-            // Delete raw samples
-            sensorDao.deleteSampleList(rawSampleIdList);
-            
-            // TODO At 12H and 24H, compact all (MINUTE) samples by hourly packs (HOUR)
-            // TODO Execute daily compacting after minute one
+            // Delete fromSensorSampleType samples
+            sensorSampleDao.deleteList(sampleIdList);
         }
     }
 }

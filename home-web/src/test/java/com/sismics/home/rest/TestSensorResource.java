@@ -11,6 +11,7 @@ import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.sismics.home.core.constant.SensorSampleType;
 import com.sismics.home.core.model.context.AppContext;
 import com.sismics.home.core.util.TransactionUtil;
 import com.sismics.util.filter.TokenBasedSecurityFilter;
@@ -166,17 +167,24 @@ public class TestSensorResource extends BaseJerseyTest {
             }
         });
         
-        // Get the sensor
-        json = target().path("/sensor/" + sensor0Id).request()
+        // Get the  raw samples
+        json = target().path("/sensor/" + sensor0Id).queryParam("sampleType", SensorSampleType.RAW.name()).request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
                 .get(JsonObject.class);
         JsonArray samples = json.getJsonArray("samples");
-        Assert.assertEquals(3, samples.size()); // 3 samples are left after compacting
+        Assert.assertEquals(1, samples.size()); // 1 raw sample is left after compacting
+        Assert.assertEquals(datePast3Min.getMillis() + 120000, samples.getJsonObject(0).getJsonNumber("date").longValue());
+        Assert.assertEquals(42, samples.getJsonObject(0).getInt("value"));
+        
+        // Get the minute samples
+        json = target().path("/sensor/" + sensor0Id).queryParam("sampleType", SensorSampleType.MINUTE.name()).request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
+                .get(JsonObject.class);
+        samples = json.getJsonArray("samples");
+        Assert.assertEquals(2, samples.size()); // 2 minute samples are created after compacting
         Assert.assertEquals(datePast3Min.getMillis() - 60000, samples.getJsonObject(0).getJsonNumber("date").longValue());
         Assert.assertEquals(10, samples.getJsonObject(0).getInt("value"));
         Assert.assertEquals(datePast3Min.getMillis(), samples.getJsonObject(1).getJsonNumber("date").longValue());
         Assert.assertEquals(20, samples.getJsonObject(1).getInt("value"));
-        Assert.assertEquals(datePast3Min.getMillis() + 120000, samples.getJsonObject(2).getJsonNumber("date").longValue());
-        Assert.assertEquals(42, samples.getJsonObject(2).getInt("value"));
     }
 }

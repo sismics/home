@@ -43,12 +43,8 @@
 <body>
   <nav class="navbar navbar-default" role="navigation" ng-controller="Navigation">
     <div class="container-fluid">
-      <div class="navbar-text loader">
-        <img src="img/loader.gif" ng-class="{hide: !isLoading() }" />
-      </div>
-
       <div class="navbar-header">
-        <a class="navbar-brand" href="#"><span class="glyphicon glyphicon-home"></span>&nbsp;&nbsp;<span class="text-muted">Sismics</span> Home</a>
+        <a class="navbar-brand" href="#"><span class="glyphicon glyphicon-home" ng-class="{ 'fa-spin': isLoading() }"></span>&nbsp;&nbsp;<span class="text-muted">Sismics</span> Home</a>
       </div>
 
       <ul class="nav navbar-nav navbar-right" ng-show="!userInfo.anonymous">

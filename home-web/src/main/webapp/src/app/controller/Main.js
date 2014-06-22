@@ -3,23 +3,68 @@
 /**
  * Main controller.
  */
-angular.module('home').controller('Main', function($scope, Restangular) {
-  $scope.data = [];
+angular.module('home').controller('Main', function($scope, $interval, $http, Restangular) {
+  $scope.data0 = [];
+  $scope.data0Type = 'RAW';
+  $scope.data1 = [];
 
-  Restangular.one('sensor', 'main-elec').get().then(function(data) {
-    _(data.samples).each(function(sample) {
-      $scope.data.push([sample.date, sample.value]);
+  // Refresh sensors
+  $scope.refreshSensors = function() {
+    Restangular.one('sensor', 'main-elec').get({ sampleType: $scope.data0Type }).then(function(data) {
+      $scope.data0.length = 0;
+      _(data.samples).each(function(sample) {
+        $scope.data0.push([sample.date, sample.value]);
+      });
     });
+
+    Restangular.one('sensor', 'main-temp').get().then(function(data) {
+      $scope.data1.length = 0;
+      _(data.samples).each(function(sample) {
+        $scope.data1.push([sample.date, sample.value]);
+      });
+    });
+  };
+
+  // Grab sensor data regulary
+  $scope.refreshSensors();
+  var interval = $interval(function() {
+    $scope.refreshSensors();
+  }, 6000);
+
+  // Destroy interval with scope
+  $scope.$on('destroy', function() {
+    $interval.cancel(interval);
   });
 
-  $scope.chartConfig = {
+  // Load weather
+  // TODO Get the real city
+  // TODO Grab weather forecast: http://api.openweathermap.org/data/2.5/forecast?q=Lyon,fr
+  $http.jsonp('http://api.openweathermap.org/data/2.5/weather?q=Lyon,fr&callback=JSON_CALLBACK')
+      .success(function(data) {
+        $scope.weather = data;
+      });
+
+  // Configure Highcharts globally
+  Highcharts.setOptions({
+    global: {
+      useUTC: false
+    }
+  });
+
+  // Chart configuration 0
+  $scope.chartConfig0 = {
     options: {
+      colors: ['#e74c3c'],
       chart: {
-        type: 'spline'
+        type: 'line',
+        height: 296
       },
       plotOptions: {
-        spline: {
-          lineWidth: 3
+        line: {
+          lineWidth: 3,
+          marker: {
+            enabled: false
+          }
         }
       },
       xAxis: {
@@ -28,13 +73,48 @@ angular.module('home').controller('Main', function($scope, Restangular) {
       yAxis: {
         title: {
           text: 'Watts'
-        }
+        },
+        min: 0
       },
       title: null
     },
     series: [{
-      data: $scope.data,
+      data: $scope.data0,
       name: 'Energy output'
+    }],
+    loading: false
+  };
+
+  // Chart configuration 1
+  $scope.chartConfig1 = {
+    options: {
+      colors: ['#f39c12'],
+      chart: {
+        type: 'line',
+        height: 362
+      },
+      plotOptions: {
+        line: {
+          lineWidth: 3,
+          marker: {
+            enabled: false
+          }
+        }
+      },
+      xAxis: {
+        type: 'datetime'
+      },
+      yAxis: {
+        title: {
+          text: '°C'
+        },
+        min: 0
+      },
+      title: null
+    },
+    series: [{
+      data: $scope.data1,
+      name: 'Temperature'
     }],
     loading: false
   };

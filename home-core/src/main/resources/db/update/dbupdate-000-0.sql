@@ -11,6 +11,8 @@ alter table T_ROLE_BASE_FUNCTION add constraint FK_RBF_IDBASEFUNCTION_C foreign 
 alter table T_ROLE_BASE_FUNCTION add constraint FK_RBF_IDROLE_C foreign key (RBF_IDROLE_C) references T_ROLE (ROL_ID_C) on delete restrict on update restrict;
 alter table T_USER add constraint FK_USE_IDROLE_C foreign key (USE_IDROLE_C) references T_ROLE (ROL_ID_C) on delete restrict on update restrict;
 alter table T_SENSOR_SAMPLE add constraint FK_SES_IDSEN_C foreign key (SES_IDSEN_C) references T_SENSOR (SEN_ID_C) on delete restrict on update restrict;
+create index if not exists IDX_SES_CREATEDATE_D on T_SENSOR_SAMPLE (SES_CREATEDATE_D);
+create index if not exists IDX_SES_TYPE_C on T_SENSOR_SAMPLE (SES_TYPE_C);
 insert into T_CONFIG(CFG_ID_C, CFG_VALUE_C) values('DB_VERSION', '0');
 insert into T_BASE_FUNCTION(BAF_ID_C) values('ADMIN');
 insert into T_BASE_FUNCTION(BAF_ID_C) values('PASSWORD');

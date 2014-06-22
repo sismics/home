@@ -20,5 +20,10 @@ public enum SensorSampleType {
     /**
      * Sample compacted from all samples from the same hour.
      */
-    HOUR
+    HOUR,
+    
+    /**
+     * Sample compacted from all samples from the same day.
+     */
+    DAY
 }

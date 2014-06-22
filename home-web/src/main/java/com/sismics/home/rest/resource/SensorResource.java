@@ -15,11 +15,14 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.sismics.home.core.constant.SensorSampleType;
 import com.sismics.home.core.dao.dbi.SensorDao;
+import com.sismics.home.core.dao.dbi.SensorSampleDao;
+import com.sismics.home.core.dao.dbi.criteria.SensorSampleCriteria;
 import com.sismics.home.core.model.dbi.Sensor;
 import com.sismics.home.core.model.dbi.Sensor.Type;
 import com.sismics.home.core.model.dbi.SensorSample;
@@ -89,6 +92,7 @@ public class SensorResource extends BaseResource {
             @FormParam("value") Float value) {
         // Check if the sensor exists
         SensorDao sensorDao = new SensorDao();
+        SensorSampleDao sensorSampleDao = new SensorSampleDao();
         Sensor sensor = sensorDao.getActiveById(id);
         if (sensor == null) {
             throw new ClientException("SensorNotFound", "The sensor doesn't exist");
@@ -105,7 +109,7 @@ public class SensorResource extends BaseResource {
         sample.setSensorId(id);
         sample.setType(SensorSampleType.RAW);
 
-        sensorDao.createSample(sample);
+        sensorSampleDao.create(sample);
 
         // Always return OK
         return Response.ok()
@@ -160,20 +164,29 @@ public class SensorResource extends BaseResource {
     @GET
     @Path("{id: [a-z0-9\\-]+}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response get(@PathParam("id") String id) {
+    public Response get(@PathParam("id") String id,
+            @QueryParam("sampleType") String sampleTypeStr) {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
+        
+        // Validate the input data
+        SensorSampleType sampleType = sampleTypeStr == null ?
+                SensorSampleType.RAW : SensorSampleType.valueOf(sampleTypeStr);
 
         // Check if the sensor exists
         SensorDao sensorDao = new SensorDao();
+        SensorSampleDao sensorSampleDao = new SensorSampleDao();
         Sensor sensor = sensorDao.getActiveById(id);
         if (sensor == null) {
             throw new ClientException("SensorNotFound", "The sensor doesn't exist");
         }
         
         // Get all samples
-        List<SensorSample> sampleList = sensorDao.findAllSample(id);
+        List<SensorSample> sampleList = sensorSampleDao.findByCriteria(
+                new SensorSampleCriteria()
+                .setSensorId(id)
+                .setType(sampleType));
 
         JsonArrayBuilder samples = Json.createArrayBuilder();
         for (SensorSample sample : sampleList) {

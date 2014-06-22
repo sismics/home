@@ -1,4 +1,3 @@
-var meterId = "main";
 var fs = require('fs');
 var rest = require('restler');
 var ccSvc = require('ccxmleventemitter');
@@ -11,7 +10,7 @@ connected to linux usb serial port /dev/ttyUSB0
 */
 
 
-envir = new ccSvc.CurrentCost128XMLBaseStation('COM3', {
+envir = new ccSvc.CurrentCost128XMLBaseStation('/dev/ttyUSB0', {
   useOSTime: true,
   debug: true,
   emitBaseEvery: 30,
@@ -24,16 +23,22 @@ envir = new ccSvc.CurrentCost128XMLBaseStation('COM3', {
 console.log("Instance version: " + (envir.version()));
 
 envir.on('base', function(eventinfo) {
-  return console.log("This base station is using " + eventinfo.src + " firmware and has been running for " + eventinfo.dsb + " days. The temperature is currently " + eventinfo.temp);
+  console.log("This base station is using " + eventinfo.src + " firmware and has been running for " + eventinfo.dsb + " days. The temperature is currently " + eventinfo.temp);
+  console.log(eventinfo);
+  rest.put("http://localhost:4001/api/sensor/main-temp/sample", {
+    data: {
+      date: new Date().getTime(),
+      value: eventinfo.temp
+    }
+  }).on('complete', function(data) { console.log(data); });
 });
 
 envir.on('sensor', function(eventinfo) {
   if (eventinfo.sensor === '0') {
     console.log("Whole House consumption reported as " + eventinfo.watts + " watts");
-    console.log(eventinfo.time.getTime());
-    rest.put("http://localhost:9999/home-web/api/elec_meter/" + meterId + "/sample", {
+    rest.put("http://localhost:4001/api/sensor/main-elec/sample", {
       data: {
-        date: eventinfo.time.getTime() + 7200000,
+        date: eventinfo.time.getTime(),
         value: eventinfo.watts
       }
     })
