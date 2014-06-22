@@ -36,15 +36,15 @@
       {{ weather.weather[0].main }} <strong>{{ weather.main.temp - 273.16 | number: 0 }}°C</strong>
     </h4>
     <p class="text-center" style="margin-top: 50px;">
-      <i class="wi wi-day-cloudy" style="font-size: 10em;"></i>
+      <i class="wi" ng-class="weatherIcon(weather.weather[0].icon)" style="font-size: 10em;"></i>
     </p>
-    <p class="text-center h3">
+    <!--<p class="text-center h3">
       <i class="wi wi-day-sunny"></i>
       <i class="wi wi-day-rain"></i>
       <i class="wi wi-day-rain-mix"></i>
       <i class="wi wi-day-cloudy-windy"></i>
       <i class="wi wi-day-cloudy"></i>
-    </p>
+    </p>-->
   </div>
 
   <div class="col-md-2 bg-info" style="height: 400px; padding-top: 70px;">

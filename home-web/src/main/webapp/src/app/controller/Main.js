@@ -118,4 +118,29 @@ angular.module('home').controller('Main', function($scope, $interval, $http, Res
     }],
     loading: false
   };
+
+  // Corresponding OpenWeatherMap icons with Weather icons
+  $scope.weatherIcon = function(owpIcon) {
+    switch (owpIcon) {
+      case '01d': return 'wi-day-sunny';
+      case '02d': return 'wi-day-cloudy';
+      case '03d': return 'wi-cloud';
+      case '04d': return 'wi-cloudy';
+      case '09d': return 'wi-rain';
+      case '10d': return 'wi-day-rain';
+      case '11d': return 'wi-thunderstorm';
+      case '13d': return 'wi-day-snow';
+      case '50d': return 'wi-day-fog';
+      case '01n': return 'wi-night-clear';
+      case '02n': return 'wi-day-cloudy';
+      case '03n': return 'wi-cloud';
+      case '04n': return 'wi-cloudy';
+      case '09n': return 'wi-rain';
+      case '10n': return 'wi-night-rain';
+      case '11n': return 'wi-thunderstorm';
+      case '13n': return 'wi-night-snow';
+      case '50n': return 'wi-night-fog';
+      default: return '';
+    }
+  }
 });
