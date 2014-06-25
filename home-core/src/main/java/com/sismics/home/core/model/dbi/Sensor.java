@@ -25,7 +25,9 @@ public class Sensor {
         
         SOUND,
         
-        LIGHT
+        LIGHT,
+        
+        MOVEMENT
     }
     
     /**

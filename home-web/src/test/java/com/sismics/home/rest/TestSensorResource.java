@@ -37,7 +37,7 @@ public class TestSensorResource extends BaseJerseyTest {
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
                 .get(JsonObject.class);
         JsonArray sensors = json.getJsonArray("sensors");
-        Assert.assertEquals(2, sensors.size());
+        Assert.assertEquals(3, sensors.size());
 
         // Create a sensor
         json = target().path("/sensor").request()
@@ -52,7 +52,7 @@ public class TestSensorResource extends BaseJerseyTest {
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
                 .get(JsonObject.class);
         sensors = json.getJsonArray("sensors");
-        Assert.assertEquals(3, sensors.size());
+        Assert.assertEquals(4, sensors.size());
         JsonObject sensor0 = sensors.getJsonObject(0);
         String sensor0Id = sensor0.getString("id");
         Assert.assertEquals("First sensor", sensor0.getString("name"));
@@ -102,7 +102,7 @@ public class TestSensorResource extends BaseJerseyTest {
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
                 .get(JsonObject.class);
         sensors = json.getJsonArray("sensors");
-        Assert.assertEquals(2, sensors.size());
+        Assert.assertEquals(3, sensors.size());
     }
     
     /**

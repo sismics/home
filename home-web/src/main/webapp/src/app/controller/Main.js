@@ -5,7 +5,7 @@
  */
 angular.module('home').controller('Main', function($scope, $interval, $http, Restangular) {
   $scope.data0 = [];
-  $scope.data0Type = 'RAW';
+  $scope.data0Type = 'MINUTE';
   $scope.data1 = [];
 
   // Refresh sensors
@@ -17,7 +17,7 @@ angular.module('home').controller('Main', function($scope, $interval, $http, Res
       });
     });
 
-    Restangular.one('sensor', 'main-temp').get().then(function(data) {
+    Restangular.one('sensor', 'internal-temp').get({ sampleType: 'MINUTE' }).then(function(data) {
       $scope.data1.length = 0;
       _(data.samples).each(function(sample) {
         $scope.data1.push([sample.date, sample.value]);

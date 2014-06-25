@@ -24,3 +24,4 @@ insert into T_ROLE_BASE_FUNCTION(RBF_ID_C, RBF_IDROLE_C, RBF_IDBASEFUNCTION_C, R
 insert into T_USER(USE_ID_C, USE_IDROLE_C, USE_USERNAME_C, USE_PASSWORD_C, USE_EMAIL_C, USE_FIRSTCONNECTION_B, USE_CREATEDATE_D) values('admin', 'admin', 'admin', '$2a$05$6Ny3TjrW3aVAL1or2SlcR.fhuDgPKp5jp.P9fBXwVNePgeLqb4i3C', 'admin@localhost', true, NOW());
 insert into T_SENSOR(SEN_ID_C, SEN_NAME_C, SEN_CREATEDATE_D, SEN_TYPE_C) values('main-elec', 'Main electricity meter', NOW(), 'ELECTRICITY');
 insert into T_SENSOR(SEN_ID_C, SEN_NAME_C, SEN_CREATEDATE_D, SEN_TYPE_C) values('main-temp', 'Main temperature sensor', NOW(), 'TEMPERATURE');
+insert into T_SENSOR(SEN_ID_C, SEN_NAME_C, SEN_CREATEDATE_D, SEN_TYPE_C) values('internal-temp', 'Internal temperature sensor', NOW(), 'TEMPERATURE');
