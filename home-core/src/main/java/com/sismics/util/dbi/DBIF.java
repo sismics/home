@@ -16,11 +16,12 @@ import org.slf4j.LoggerFactory;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 import com.sismics.home.core.dao.dbi.mapper.AuthenticationTokenMapper;
 import com.sismics.home.core.dao.dbi.mapper.BaseFunctionMapper;
+import com.sismics.home.core.dao.dbi.mapper.CameraMapper;
 import com.sismics.home.core.dao.dbi.mapper.ConfigMapper;
-import com.sismics.home.core.dao.dbi.mapper.SensorMapper;
-import com.sismics.home.core.dao.dbi.mapper.SensorSampleMapper;
 import com.sismics.home.core.dao.dbi.mapper.RoleBaseFunctionMapper;
 import com.sismics.home.core.dao.dbi.mapper.RoleMapper;
+import com.sismics.home.core.dao.dbi.mapper.SensorMapper;
+import com.sismics.home.core.dao.dbi.mapper.SensorSampleMapper;
 import com.sismics.home.core.dao.dbi.mapper.UserMapper;
 import com.sismics.home.core.util.DirectoryUtil;
 
@@ -54,6 +55,7 @@ public class DBIF {
             dbi.registerMapper(new UserMapper());
             dbi.registerMapper(new SensorMapper());
             dbi.registerMapper(new SensorSampleMapper());
+            dbi.registerMapper(new CameraMapper());
         } catch (Throwable t) {
             log.error("Error creating DBI", t);
         }

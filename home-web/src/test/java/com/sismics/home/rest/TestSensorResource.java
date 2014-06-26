@@ -107,6 +107,7 @@ public class TestSensorResource extends BaseJerseyTest {
     
     /**
      * Test samples compacting.
+     * 
      * @throws Exception
      */
     @Test

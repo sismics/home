@@ -60,7 +60,7 @@ public class SensorResource extends BaseResource {
         ValidationUtil.validateRequired(typeStr, "type");
         Type type = Type.valueOf(typeStr);
 
-        // Create the electricity meter
+        // Create the sensor
         Sensor sensor = new Sensor();
         sensor.setName(name);
         sensor.setType(type);

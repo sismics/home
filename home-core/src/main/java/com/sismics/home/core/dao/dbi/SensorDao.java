@@ -12,7 +12,7 @@ import com.sismics.home.core.model.dbi.Sensor;
 import com.sismics.util.context.ThreadLocalContext;
 
 /**
- * Electricity meter DAO.
+ * Sensor DAO.
  * 
  * @author bgamard
  */

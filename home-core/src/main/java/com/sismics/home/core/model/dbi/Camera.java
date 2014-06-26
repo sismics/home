@@ -5,30 +5,11 @@ import com.google.common.base.Objects;
 import java.util.Date;
 
 /**
- * Sensor.
+ * Camera.
  * 
  * @author bgamard
  */
-public class Sensor {
-    /**
-     * Sensor type.
-     * 
-     * @author bgamard
-     */
-    public enum Type {
-        ELECTRICITY,
-        
-        TEMPERATURE,
-        
-        HUMIDITY,
-        
-        SOUND,
-        
-        LIGHT,
-        
-        MOVEMENT
-    }
-    
+public class Camera {
     /**
      * ID.
      */
@@ -40,9 +21,14 @@ public class Sensor {
     private String name;
     
     /**
-     * Type.
+     * Stored pictures folder.
      */
-    private Type type;
+    private String folder;
+    
+    /**
+     * Latest picture.
+     */
+    private String current;
     
     /**
      * Creation date.
@@ -54,15 +40,16 @@ public class Sensor {
      */
     private Date deleteDate;
 
-    public Sensor() {
+    public Camera() {
     }
 
-    public Sensor(String id, String name, Date createDate, Date deleteDate, Type type) {
+    public Camera(String id, String name, Date createDate, Date deleteDate, String folder, String current) {
         this.id = id;
         this.name = name;
         this.createDate = createDate;
         this.deleteDate = deleteDate;
-        this.type = type;
+        this.folder = folder;
+        this.current = current;
     }
 
     /**
@@ -136,21 +123,37 @@ public class Sensor {
     public void setDeleteDate(Date deleteDate) {
         this.deleteDate = deleteDate;
     }
-    
+
     /**
-     * Getter of type.
-     * @return type
+     * Getter of current.
+     * @return current
      */
-    public Type getType() {
-        return type;
+    public String getCurrent() {
+        return current;
     }
 
     /**
-     * Setter of type.
-     * @param type type
+     * Setter of current.
+     * @param current current
      */
-    public void setType(Type type) {
-        this.type = type;
+    public void setCurrent(String current) {
+        this.current = current;
+    }
+    
+    /**
+     * Getter of folder.
+     * @return folder
+     */
+    public String getFolder() {
+        return folder;
+    }
+
+    /**
+     * Setter of folder.
+     * @param folder folder
+     */
+    public void setFolder(String folder) {
+        this.folder = folder;
     }
 
     @Override
@@ -158,7 +161,7 @@ public class Sensor {
         return Objects.toStringHelper(this)
                 .add("id", id)
                 .add("name", name)
-                .add("type", type)
+                .add("folder", folder)
                 .toString();
     }
 }

@@ -4,7 +4,8 @@ create memory table T_CONFIG ( CFG_ID_C varchar(50) not null, CFG_VALUE_C varcha
 create memory table T_ROLE ( ROL_ID_C varchar(36) not null, ROL_NAME_C varchar(50) not null, ROL_CREATEDATE_D datetime not null, ROL_DELETEDATE_D datetime, primary key (ROL_ID_C) );
 create memory table T_ROLE_BASE_FUNCTION ( RBF_ID_C varchar(36) not null, RBF_IDROLE_C varchar(36), RBF_IDBASEFUNCTION_C varchar(20) not null, RBF_CREATEDATE_D datetime not null, RBF_DELETEDATE_D datetime, primary key (RBF_ID_C) );
 create memory table T_USER ( USE_ID_C varchar(36) not null, USE_IDROLE_C varchar(36) not null, USE_USERNAME_C varchar(50) not null, USE_PASSWORD_C varchar(60) not null, USE_EMAIL_C varchar(100) not null, USE_FIRSTCONNECTION_B bit default 0 not null, USE_CREATEDATE_D datetime not null, USE_DELETEDATE_D datetime, primary key (USE_ID_C) );
-create memory table T_SENSOR ( SEN_ID_C varchar(36) not null, SEN_NAME_C varchar(50) not null, SEN_TYPE_C varchar(50) not null, SEN_CREATEDATE_D datetime not null, SEN_DELETEDATE_D datetime, primary key (SEN_ID_C) );
+create memory table T_CAMERA ( CAM_ID_C varchar(36) not null, CAM_NAME_C varchar(100) not null, CAM_FOLDER_C varchar(4000) not null, CAM_CURRENT_C varchar(1000), CAM_CREATEDATE_D datetime not null, CAM_DELETEDATE_D datetime, primary key (CAM_ID_C) );
+create memory table T_SENSOR ( SEN_ID_C varchar(36) not null, SEN_NAME_C varchar(100) not null, SEN_TYPE_C varchar(50) not null, SEN_CREATEDATE_D datetime not null, SEN_DELETEDATE_D datetime, primary key (SEN_ID_C) );
 create cached table T_SENSOR_SAMPLE ( SES_ID_C varchar(36) not null, SES_IDSEN_C varchar(36) not null, SES_VALUE_N float not null, SES_CREATEDATE_D datetime not null, SES_TYPE_C varchar(30) not null, primary key (SES_ID_C) );
 alter table T_AUTHENTICATION_TOKEN add constraint FK_AUT_IDUSER_C foreign key (AUT_IDUSER_C) references T_USER (USE_ID_C) on delete restrict on update restrict;
 alter table T_ROLE_BASE_FUNCTION add constraint FK_RBF_IDBASEFUNCTION_C foreign key (RBF_IDBASEFUNCTION_C) references T_BASE_FUNCTION (BAF_ID_C) on delete restrict on update restrict;
@@ -25,3 +26,4 @@ insert into T_USER(USE_ID_C, USE_IDROLE_C, USE_USERNAME_C, USE_PASSWORD_C, USE_E
 insert into T_SENSOR(SEN_ID_C, SEN_NAME_C, SEN_CREATEDATE_D, SEN_TYPE_C) values('main-elec', 'Main electricity meter', NOW(), 'ELECTRICITY');
 insert into T_SENSOR(SEN_ID_C, SEN_NAME_C, SEN_CREATEDATE_D, SEN_TYPE_C) values('main-temp', 'Main temperature sensor', NOW(), 'TEMPERATURE');
 insert into T_SENSOR(SEN_ID_C, SEN_NAME_C, SEN_CREATEDATE_D, SEN_TYPE_C) values('internal-temp', 'Internal temperature sensor', NOW(), 'TEMPERATURE');
+insert into T_CAMERA(CAM_ID_C, CAM_NAME_C, CAM_CREATEDATE_D, CAM_FOLDER_C) values('main-camera', 'Main camera', NOW(), '/home/pi/camera');
