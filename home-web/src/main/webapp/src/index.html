@@ -37,6 +37,7 @@
   <script src="app/controller/Navigation.js" type="text/javascript"></script>
   <script src="app/controller/Login.js" type="text/javascript"></script>
   <script src="app/controller/Main.js" type="text/javascript"></script>
+  <script src="app/controller/Camera.js" type="text/javascript"></script>
   <script src="app/service/User.js" type="text/javascript"></script>
   <!-- endref -->
 </head>
@@ -44,29 +45,49 @@
   <nav class="navbar navbar-default" role="navigation" ng-controller="Navigation">
     <div class="container-fluid">
       <div class="navbar-header">
+        <button type="button" class="navbar-toggle"
+                ng-init="isCollapsed = true"
+                ng-click="isCollapsed = !isCollapsed">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+      
         <a class="navbar-brand" href="#"><span class="glyphicon glyphicon-home" ng-class="{ 'fa-spin': isLoading() }"></span>&nbsp;&nbsp;<span class="text-muted">Sismics</span> Home</a>
       </div>
-
-      <ul class="nav navbar-nav navbar-right" ng-show="!userInfo.anonymous">
-        <li class="dropdown" ng-class="{active: $uiRoute}" ui-route="/settings.*">
-          <a href="#" class="dropdown-toggle" bs-dropdown data-animation="am-fade" data-template="partial/navbar.dropdown.settings.html">
-            <span class="glyphicon glyphicon-cog"></span> <span class="sr-only">Settings</span> <b class="caret"></b>
-          </a>
-          <script type="text/ng-template" id="partial/navbar.dropdown.settings.html">
+      
+      <div class="collapse navbar-collapse" collapse="isCollapsed">
+        <ul class="nav navbar-nav" ng-show="!userInfo.anonymous">
+          <li ng-class="{active: $uiRoute}" ui-route="">
+            <a href="#"><span class="glyphicon glyphicon-stats"></span> Dashboard</a>
+          </li>
+          <li ng-class="{active: $uiRoute}" ui-route="/camera.*">
+            <a href="#/camera"><span class="fa fa-video-camera"></span> Camera</a>
+          </li>
+        </ul>
+      
+	      <ul class="nav navbar-nav navbar-right" ng-show="!userInfo.anonymous">
+	        <li class="dropdown" ng-class="{active: $uiRoute}" ui-route="/settings.*">
+	          <a href="#" class="dropdown-toggle" bs-dropdown data-animation="am-fade" data-template="partial/navbar.dropdown.settings.html">
+	            <span class="glyphicon glyphicon-cog"></span> <span class="sr-only">Settings</span> <b class="caret"></b>
+	          </a>
+	          <script type="text/ng-template" id="partial/navbar.dropdown.settings.html">
             <ul class="dropdown-menu">
               <li ng-class="{active: $uiRoute}" ui-route="/settings/account"><a href="#/settings/account">My account</a></li>
-              <li ng-class="{active: $uiRoute}" ui-route="/settings/elec_meter"><a href="#/settings/elec_meter">Electricity meters</a></li>
+              <li ng-class="{active: $uiRoute}" ui-route="/settings/sensors"><a href="#/settings/sensors">Sensors</a></li>
               <li ng-show="isAdmin" ng-class="{active: $uiRoute}" ui-route="/settings/user"><a href="#/settings/user">Users</a></li>
               <li ng-show="isAdmin" ng-class="{active: $uiRoute}" ui-route="/settings/log"><a href="#/settings/log">Logs</a></li>
             </ul>
           </script>
-        </li>
-        <li>
-          <a href="#" ng-click="logout($event)">
-            <span class="glyphicon glyphicon-off"></span> Logout
-          </a>
-        </li>
-      </ul>
+	        </li>
+	        <li>
+	          <a href="#" ng-click="logout($event)">
+	            <span class="glyphicon glyphicon-off"></span> Logout
+	          </a>
+	        </li>
+	      </ul>
+      </div>
     </div>
   </nav>
 

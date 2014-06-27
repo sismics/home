@@ -31,6 +31,15 @@ angular.module('home',
                 controller: 'Main'
               }
             }
+          })
+          .state('camera', {
+            url: '/camera',
+            views: {
+              'page': {
+                templateUrl: 'partial/camera.html',
+                controller: 'Camera'
+              }
+            }
           });
 
       // Configuring Restangular
