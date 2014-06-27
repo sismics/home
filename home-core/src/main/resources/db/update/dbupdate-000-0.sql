@@ -26,4 +26,4 @@ insert into T_USER(USE_ID_C, USE_IDROLE_C, USE_USERNAME_C, USE_PASSWORD_C, USE_E
 insert into T_SENSOR(SEN_ID_C, SEN_NAME_C, SEN_CREATEDATE_D, SEN_TYPE_C) values('main-elec', 'Main electricity meter', NOW(), 'ELECTRICITY');
 insert into T_SENSOR(SEN_ID_C, SEN_NAME_C, SEN_CREATEDATE_D, SEN_TYPE_C) values('main-temp', 'Main temperature sensor', NOW(), 'TEMPERATURE');
 insert into T_SENSOR(SEN_ID_C, SEN_NAME_C, SEN_CREATEDATE_D, SEN_TYPE_C) values('internal-temp', 'Internal temperature sensor', NOW(), 'TEMPERATURE');
-insert into T_CAMERA(CAM_ID_C, CAM_NAME_C, CAM_CREATEDATE_D, CAM_FOLDER_C) values('main-camera', 'Main camera', NOW(), '/home/pi/camera');
+insert into T_CAMERA(CAM_ID_C, CAM_NAME_C, CAM_CREATEDATE_D, CAM_FOLDER_C, CAM_CURRENT_C) values('main-camera', 'Main camera', NOW(), '/home/pi/camera', 'out.jpg');

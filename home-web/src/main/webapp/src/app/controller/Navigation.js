@@ -9,13 +9,6 @@ angular.module('home').controller('Navigation', function($rootScope, $http, $sco
     return $http.pendingRequests.length > 0;
   };
 
-  // Load user data on application startup
-  User.userInfo().then(function(data) {
-    if (data.anonymous) {
-      $state.transitionTo('login');
-    }
-  });
-
   // Watch user info for admin status
   $scope.$watch('userInfo', function(userInfo) {
     $scope.isAdmin = userInfo && userInfo.base_functions && userInfo.base_functions.indexOf('ADMIN') != -1;

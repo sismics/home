@@ -163,7 +163,7 @@ public class CameraResource extends BaseResource {
      */
     @GET
     @Path("{id: [a-z0-9\\-]+}/picture")
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces("image/jpeg")
     public Response picture(@PathParam("id") String id) {
         if (!authenticate()) {
             throw new ForbiddenClientException();

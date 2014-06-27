@@ -1,8 +1,14 @@
 <div class="row">
 
-  <div class="col-md-12">
-    <div class="well">
-      <img ng-if="camera" ng-src="api/camera/{{ camera.id }}/picture" />
+  <div class="col-md-10">
+    <div class="well text-center">
+      <img ng-if="camera" ng-src="{{ imageUrl }}" />
+    </div>
+  </div>
+
+  <div class="col-md-2">
+    <div class="well text-center">
+      <span class="btn btn-primary" ng-click="buildImageUrl()"><span class="glyphicon glyphicon-refresh"></span> Refresh</span>
     </div>
   </div>
 

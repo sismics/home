@@ -27,8 +27,16 @@ angular.module('home',
             url: '',
             views: {
               'page': {
-                templateUrl: 'partial/main.html',
                 controller: 'Main'
+              }
+            }
+          })
+          .state('dashboard', {
+            url: '/dashboard',
+            views: {
+              'page': {
+                templateUrl: 'partial/dashboard.html',
+                controller: 'Dashboard'
               }
             }
           })
