@@ -1,5 +1,6 @@
 package com.sismics.rest.util;
 
+import java.io.File;
 import java.text.MessageFormat;
 import java.util.Date;
 import java.util.regex.Pattern;
@@ -169,5 +170,31 @@ public class ValidationUtil {
         } catch (NumberFormatException e) {
             throw new ClientException("ValidationError", MessageFormat.format("{0} must be a date", name));
         }
+    }
+    
+    /**
+     * Validates a directory.
+     * 
+     * @param s Path to the directory
+     * @param name Name of the parameter
+     * @param nullable True if the path can be empty or null
+     * @return Directory
+     * @throws ClientException
+     */
+    public static File validateDirectory(String s, String name, boolean nullable) throws ClientException {
+        if (Strings.isNullOrEmpty(s)) {
+            if (!nullable) {
+                throw new ClientException("ValidationError", MessageFormat.format("{0} must be set", name));
+            } else {
+                return null;
+            }
+        }
+        
+        File directory = new File(s);
+        if (!directory.exists() || directory.isFile()) {
+            throw new ClientException("ValidationError", MessageFormat.format("{0} must be a valid directory", name));
+        }
+        
+        return directory;
     }
 }

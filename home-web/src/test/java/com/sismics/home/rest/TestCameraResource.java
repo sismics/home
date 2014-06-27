@@ -8,6 +8,7 @@ import javax.ws.rs.core.Form;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.google.common.io.Resources;
 import com.sismics.util.filter.TokenBasedSecurityFilter;
 
 /**
@@ -38,7 +39,7 @@ public class TestCameraResource extends BaseJerseyTest {
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
                 .put(Entity.form(new Form()
                         .param("name", "Secondary camera")
-                        .param("folder", "/home/pi/camera2")), JsonObject.class);
+                        .param("folder", Resources.getResource("pictures").getPath())), JsonObject.class);
         Assert.assertEquals("ok", json.getString("status"));
 
         // List all cameras
@@ -50,7 +51,7 @@ public class TestCameraResource extends BaseJerseyTest {
         JsonObject camera0 = cameras.getJsonObject(1);
         String camera0Id = camera0.getString("id");
         Assert.assertEquals("Secondary camera", camera0.getString("name"));
-        Assert.assertEquals("/home/pi/camera2", camera0.getString("folder"));
+        Assert.assertEquals(Resources.getResource("pictures").getPath(), camera0.getString("folder"));
 
         // Update a camera
         json = target().path("/camera/" + camera0Id).request()
@@ -66,6 +67,11 @@ public class TestCameraResource extends BaseJerseyTest {
                 .get(JsonObject.class);
         Assert.assertEquals("Secondary camera updated", json.getString("name"));
         Assert.assertEquals("01.jpg", json.getString("current"));
+        
+        // Get the current picture
+        target().path("/camera/" + camera0Id + "/picture").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
+                .get();
 
         // Delete the camera
         json = target().path("/camera/" + camera0Id).request()

@@ -1,5 +1,6 @@
 package com.sismics.home.rest.resource;
 
+import java.io.File;
 import java.util.List;
 
 import javax.json.Json;
@@ -52,12 +53,12 @@ public class CameraResource extends BaseResource {
 
         // Validate the input data
         name = ValidationUtil.validateLength(name, "name", 1, 100);
-        folder = ValidationUtil.validateLength(folder, "folder", 1, 4000);
+        ValidationUtil.validateDirectory(folder, "folder", false);
 
         // Create the camera
         Camera camera = new Camera();
         camera.setName(name);
-        camera.setFolder(folder); // TODO Check that the folder is accessible
+        camera.setFolder(folder);
 
         CameraDao cameraDao = new CameraDao();
         String cameraId = cameraDao.create(camera);
@@ -96,7 +97,7 @@ public class CameraResource extends BaseResource {
 
         // Validate the input data
         name = ValidationUtil.validateLength(name, "name", 1, 100, true);
-        folder = ValidationUtil.validateLength(folder, "folder", 1, 4000, true);
+        ValidationUtil.validateDirectory(folder, "folder", true);
         current = ValidationUtil.validateLength(current, "current", 1, 1000, true);
 
         // Update the camera
@@ -106,7 +107,7 @@ public class CameraResource extends BaseResource {
             camera.setName(name);
         }
         if (folder != null) {
-            camera.setFolder(folder); // TODO Check that the folder is accessible
+            camera.setFolder(folder);
         }
         if (current != null) {
             camera.setCurrent(current);
@@ -151,6 +152,35 @@ public class CameraResource extends BaseResource {
         // Always return OK
         return Response.ok()
                 .entity(json)
+                .build();
+    }
+    
+    /**
+     * Get a camera picture.
+     *
+     * @param id ID
+     * @return Response
+     */
+    @GET
+    @Path("{id: [a-z0-9\\-]+}/picture")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response picture(@PathParam("id") String id) {
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
+        
+        // Check if the camera exists
+        CameraDao cameraDao = new CameraDao();
+        Camera camera = cameraDao.getActiveById(id);
+        if (camera == null) {
+            throw new ClientException("CameraNotFound", "The camera doesn't exist");
+        }
+        
+        File pictureFile = new File(camera.getFolder() + File.separator + camera.getCurrent());
+        
+        // Always return OK
+        return Response.ok()
+                .entity(pictureFile)
                 .build();
     }
 
