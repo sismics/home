@@ -68,9 +68,9 @@ public class SensorService extends AbstractScheduledService {
      * Compact sensors data.
      */
     public void compactSensors() {
-        compactSensors(Duration.standardMinutes(2), DateTimeFieldType.minuteOfHour(), SensorSampleType.RAW, SensorSampleType.MINUTE);
-        compactSensors(Duration.standardHours(6), DateTimeFieldType.hourOfDay(), SensorSampleType.MINUTE, SensorSampleType.HOUR);
-        compactSensors(Duration.standardDays(30), DateTimeFieldType.dayOfMonth(), SensorSampleType.HOUR, SensorSampleType.DAY);
+        compactSensors(Duration.standardMinutes(30), DateTimeFieldType.minuteOfHour(), SensorSampleType.RAW, SensorSampleType.MINUTE);
+        compactSensors(Duration.standardHours(12), DateTimeFieldType.hourOfDay(), SensorSampleType.MINUTE, SensorSampleType.HOUR);
+        compactSensors(Duration.standardDays(60), DateTimeFieldType.dayOfMonth(), SensorSampleType.HOUR, SensorSampleType.DAY);
     }
 
     /**

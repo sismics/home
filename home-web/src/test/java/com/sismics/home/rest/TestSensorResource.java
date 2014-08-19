@@ -156,38 +156,43 @@ public class TestSensorResource extends BaseJerseyTest {
         String sensor0Id = json.getString("id");
         
         // Add a sample to the sensor, 3 minutes plus 12 seconds in the past
-        DateTime datePast3Min = DateTime.now().minuteOfHour().roundFloorCopy().minusMinutes(3);
-        json = target().path("/sensor/" + sensor0Id + "/sample").request()
+        DateTime datePast32Min = DateTime.now().minuteOfHour().roundFloorCopy().minusMinutes(32);
+        json = target().path("/sensor/sample").request()
                 .put(Entity.form(new Form()
-                        .param("date", "" + datePast3Min.plusSeconds(12).getMillis())
+                        .param("id", sensor0Id)
+                        .param("date", "" + datePast32Min.plusSeconds(12).getMillis())
                         .param("value", "10")), JsonObject.class);
         Assert.assertEquals("ok", json.getString("status"));
         
         // Add a sample to the sensor, 3 minutes plus 48 seconds in the past
-        json = target().path("/sensor/" + sensor0Id + "/sample").request()
+        json = target().path("/sensor/sample").request()
                 .put(Entity.form(new Form()
-                        .param("date", "" + datePast3Min.plusSeconds(48).getMillis())
+                        .param("id", sensor0Id)
+                        .param("date", "" + datePast32Min.plusSeconds(48).getMillis())
                         .param("value", "20")), JsonObject.class);
         Assert.assertEquals("ok", json.getString("status"));
         
         // Add a sample to the sensor, 3 minutes minus 8 seconds in the past
-        json = target().path("/sensor/" + sensor0Id + "/sample").request()
+        json = target().path("/sensor/sample").request()
                 .put(Entity.form(new Form()
-                        .param("date", "" + datePast3Min.minusSeconds(8).getMillis())
+                        .param("id", sensor0Id)
+                        .param("date", "" + datePast32Min.minusSeconds(8).getMillis())
                         .param("value", "10")), JsonObject.class);
         Assert.assertEquals("ok", json.getString("status"));
         
         // Add a sample to the sensor, 3 minutes plus 1 seconds in the past
-        json = target().path("/sensor/" + sensor0Id + "/sample").request()
+        json = target().path("/sensor/sample").request()
                 .put(Entity.form(new Form()
-                        .param("date", "" + datePast3Min.plusSeconds(1).getMillis())
+                        .param("id", sensor0Id)
+                        .param("date", "" + datePast32Min.plusSeconds(1).getMillis())
                         .param("value", "30")), JsonObject.class);
         Assert.assertEquals("ok", json.getString("status"));
         
         // Add a sample to the sensor, 1 minute in the past
-        json = target().path("/sensor/" + sensor0Id + "/sample").request()
+        json = target().path("/sensor/sample").request()
                 .put(Entity.form(new Form()
-                        .param("date", "" + datePast3Min.plusMinutes(2).getMillis())
+                        .param("id", sensor0Id)
+                        .param("date", "" + datePast32Min.plusMinutes(2).getMillis())
                         .param("value", "42")), JsonObject.class);
         Assert.assertEquals("ok", json.getString("status"));
         
@@ -205,7 +210,7 @@ public class TestSensorResource extends BaseJerseyTest {
                 .get(JsonObject.class);
         JsonArray samples = json.getJsonArray("samples");
         Assert.assertEquals(1, samples.size()); // 1 raw sample is left after compacting
-        Assert.assertEquals(datePast3Min.getMillis() + 120000, samples.getJsonObject(0).getJsonNumber("date").longValue());
+        Assert.assertEquals(datePast32Min.getMillis() + 120000, samples.getJsonObject(0).getJsonNumber("date").longValue());
         Assert.assertEquals(42, samples.getJsonObject(0).getInt("value"));
         
         // Get the minute samples
@@ -214,9 +219,9 @@ public class TestSensorResource extends BaseJerseyTest {
                 .get(JsonObject.class);
         samples = json.getJsonArray("samples");
         Assert.assertEquals(2, samples.size()); // 2 minute samples are created after compacting
-        Assert.assertEquals(datePast3Min.getMillis() - 60000, samples.getJsonObject(0).getJsonNumber("date").longValue());
+        Assert.assertEquals(datePast32Min.getMillis() - 60000, samples.getJsonObject(0).getJsonNumber("date").longValue());
         Assert.assertEquals(10, samples.getJsonObject(0).getInt("value"));
-        Assert.assertEquals(datePast3Min.getMillis(), samples.getJsonObject(1).getJsonNumber("date").longValue());
+        Assert.assertEquals(datePast32Min.getMillis(), samples.getJsonObject(1).getJsonNumber("date").longValue());
         Assert.assertEquals(20, samples.getJsonObject(1).getInt("value"));
     }
 }

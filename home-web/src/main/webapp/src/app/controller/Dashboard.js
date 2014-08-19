@@ -26,7 +26,7 @@ angular.module('home').controller('Dashboard', function($scope, $interval, $http
       });
     });
 
-    Restangular.one('sensor', 'main-humidity').get({ sampleType: $scope.data2Type }).then(function(data) {
+    Restangular.one('sensor', 'main-humidity').get({ sampleType: $scope.data1Type }).then(function(data) {
       $scope.data2.length = 0;
       _(data.samples).each(function(sample) {
         $scope.data2.push([sample.date, sample.value]);
