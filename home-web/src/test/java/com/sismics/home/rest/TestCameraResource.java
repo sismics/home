@@ -32,7 +32,7 @@ public class TestCameraResource extends BaseJerseyTest {
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
                 .get(JsonObject.class);
         JsonArray cameras = json.getJsonArray("cameras");
-        Assert.assertEquals(1, cameras.size());
+        Assert.assertEquals(0, cameras.size());
 
         // Create a camera
         json = target().path("/camera").request()
@@ -47,8 +47,8 @@ public class TestCameraResource extends BaseJerseyTest {
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
                 .get(JsonObject.class);
         cameras = json.getJsonArray("cameras");
-        Assert.assertEquals(2, cameras.size());
-        JsonObject camera0 = cameras.getJsonObject(1);
+        Assert.assertEquals(1, cameras.size());
+        JsonObject camera0 = cameras.getJsonObject(0);
         String camera0Id = camera0.getString("id");
         Assert.assertEquals("Secondary camera", camera0.getString("name"));
         Assert.assertEquals(Resources.getResource("pictures").getPath(), camera0.getString("folder"));
@@ -84,6 +84,6 @@ public class TestCameraResource extends BaseJerseyTest {
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
                 .get(JsonObject.class);
         cameras = json.getJsonArray("cameras");
-        Assert.assertEquals(1, cameras.size());
+        Assert.assertEquals(0, cameras.size());
     }
 }

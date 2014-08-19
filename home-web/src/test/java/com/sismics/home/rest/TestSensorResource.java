@@ -37,7 +37,7 @@ public class TestSensorResource extends BaseJerseyTest {
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
                 .get(JsonObject.class);
         JsonArray sensors = json.getJsonArray("sensors");
-        Assert.assertEquals(3, sensors.size());
+        Assert.assertEquals(4, sensors.size());
 
         // Create a sensor
         json = target().path("/sensor").request()
@@ -52,7 +52,7 @@ public class TestSensorResource extends BaseJerseyTest {
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
                 .get(JsonObject.class);
         sensors = json.getJsonArray("sensors");
-        Assert.assertEquals(4, sensors.size());
+        Assert.assertEquals(5, sensors.size());
         JsonObject sensor0 = sensors.getJsonObject(0);
         String sensor0Id = sensor0.getString("id");
         Assert.assertEquals("First sensor", sensor0.getString("name"));
@@ -75,8 +75,9 @@ public class TestSensorResource extends BaseJerseyTest {
 
         // Add a sample to the sensor
         long date = new Date().getTime();
-        json = target().path("/sensor/" + sensor0Id + "/sample").request()
+        json = target().path("/sensor/sample").request()
                 .put(Entity.form(new Form()
+                        .param("id", sensor0Id)
                         .param("date", "" + date)
                         .param("value", "254.5")), JsonObject.class);
         Assert.assertEquals("ok", json.getString("status"));
@@ -89,7 +90,37 @@ public class TestSensorResource extends BaseJerseyTest {
         JsonArray samples = json.getJsonArray("samples");
         Assert.assertEquals(1, samples.size());
         Assert.assertEquals(date, samples.getJsonObject(0).getJsonNumber("date").longValue());
-        Assert.assertEquals(254, samples.getJsonObject(0).getInt("value"));
+        Assert.assertEquals(254.5, samples.getJsonObject(0).getJsonNumber("value").doubleValue(), 0.0);
+        
+        // Add multiple samples to the sensor
+        json = target().path("/sensor/sample").request()
+                .put(Entity.form(new Form()
+                        .param("id", sensor0Id)
+                        .param("date", "" + date)
+                        .param("value", "254.5")
+                        .param("id", sensor0Id)
+                        .param("date", "" + date)
+                        .param("value", "255.5")
+                        .param("id", sensor0Id)
+                        .param("date", "" + date)
+                        .param("value", "256.5")), JsonObject.class);
+        Assert.assertEquals("ok", json.getString("status"));
+        
+        // Get the sensor
+        json = target().path("/sensor/" + sensor0Id).request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
+                .get(JsonObject.class);
+        Assert.assertEquals("Temp meter", json.getString("name"));
+        samples = json.getJsonArray("samples");
+        Assert.assertEquals(4, samples.size());
+        Assert.assertEquals(date, samples.getJsonObject(0).getJsonNumber("date").longValue());
+        Assert.assertEquals(254.5, samples.getJsonObject(0).getJsonNumber("value").doubleValue(), 0.0);
+        Assert.assertEquals(date, samples.getJsonObject(1).getJsonNumber("date").longValue());
+        Assert.assertEquals(254.5, samples.getJsonObject(1).getJsonNumber("value").doubleValue(), 0.0);
+        Assert.assertEquals(date, samples.getJsonObject(2).getJsonNumber("date").longValue());
+        Assert.assertEquals(255.5, samples.getJsonObject(2).getJsonNumber("value").doubleValue(), 0.0);
+        Assert.assertEquals(date, samples.getJsonObject(3).getJsonNumber("date").longValue());
+        Assert.assertEquals(256.5, samples.getJsonObject(3).getJsonNumber("value").doubleValue(), 0.0);
         
         // Delete the sensor
         json = target().path("/sensor/" + sensor0Id).request()
@@ -102,7 +133,7 @@ public class TestSensorResource extends BaseJerseyTest {
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
                 .get(JsonObject.class);
         sensors = json.getJsonArray("sensors");
-        Assert.assertEquals(3, sensors.size());
+        Assert.assertEquals(4, sensors.size());
     }
     
     /**

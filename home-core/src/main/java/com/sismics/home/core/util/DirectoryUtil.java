@@ -29,7 +29,7 @@ public class DirectoryUtil {
         } else {
             // We are in a webapp environment and nothing is specified, use the default directory for this OS
             if (EnvironmentUtil.isUnix()) {
-                baseDataDir = new File("/var/home");
+                baseDataDir = new File("/var/sismicshome");
             } if (EnvironmentUtil.isWindows()) {
                 baseDataDir = new File(EnvironmentUtil.getWindowsAppData() + "\\Sismics\\Home");
             } else if (EnvironmentUtil.isMacOs()) {

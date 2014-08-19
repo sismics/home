@@ -53,12 +53,12 @@
       <i class="wi wi-sprinkles" style="font-size: 10em;"></i>
     </p>
     <h2 class="text-center">
-      <strong>{{ weather.main.humidity }}%</strong>
+      <strong>{{ data2[data2.length - 1][1] | number: 1 }}%</strong>
     </h2>
   </div>
 
   <div class="col-md-2 bg-warning" style="height: 400px; padding-top: 70px;">
-    <h4 class="text-center">Internal temperature</h4>
+    <h4 class="text-center">Main temperature</h4>
     <p class="text-center">
       <i class="wi wi-thermometer" style="font-size: 10em;"></i>
     </p>
@@ -69,6 +69,20 @@
 
   <div class="col-md-6">
     <div class="well">
+      <div class="btn-group">
+        <button type="button" class="btn btn-default"
+                ng-class="{ 'active': data1Type == 'RAW' }"
+                ng-click="data1Type = 'RAW'; refreshSensors()">Raw</button>
+        <button type="button" class="btn btn-default"
+                ng-class="{ 'active': data1Type == 'MINUTE' }"
+                ng-click="data1Type = 'MINUTE'; refreshSensors()">Minutes</button>
+        <button type="button" class="btn btn-default"
+                ng-class="{ 'active': data1Type == 'HOUR' }"
+                ng-click="data1Type = 'HOUR'; refreshSensors()">Hours</button>
+        <button type="button" class="btn btn-default"
+                ng-class="{ 'active': data1Type == 'DAY' }"
+                ng-click="data1Type = 'DAY'; refreshSensors()">Days</button>
+      </div>
       <highchart config="chartConfig1"></highchart>
     </div>
   </div>

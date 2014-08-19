@@ -1,9 +1,9 @@
 {
-  "name": "sismics-home-thermostat",
-  "description": "Tessel app exposing Sismics Home API for regulating temperature through electric convector. Setting temperature : POST /temperature?temp=294. Requesting current temperature : GET /temperature/current. Requesting target temperature : GET /temperature/target",
+  "name": "sismics-home-tessel",
+  "description": "Tessel app to send sensors data to Sismics Home",
   "version": "0.0.1",
   "private": true,
   "dependencies": {
-    "express": "4.x"
+    "climate-si7020": "~0.1.0"
   }
 }

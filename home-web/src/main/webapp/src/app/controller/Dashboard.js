@@ -5,8 +5,10 @@
  */
 angular.module('home').controller('Dashboard', function($scope, $interval, $http, Restangular) {
   $scope.data0 = [];
-  $scope.data0Type = 'RAW';
   $scope.data1 = [];
+  $scope.data2 = [];
+  $scope.data0Type = 'RAW';
+  $scope.data1Type = 'RAW';
 
   // Refresh sensors
   $scope.refreshSensors = function() {
@@ -17,10 +19,17 @@ angular.module('home').controller('Dashboard', function($scope, $interval, $http
       });
     });
 
-    Restangular.one('sensor', 'internal-temp').get({ sampleType: 'RAW' }).then(function(data) {
+    Restangular.one('sensor', 'main-temp').get({ sampleType: $scope.data1Type }).then(function(data) {
       $scope.data1.length = 0;
       _(data.samples).each(function(sample) {
         $scope.data1.push([sample.date, sample.value]);
+      });
+    });
+
+    Restangular.one('sensor', 'main-humidity').get({ sampleType: $scope.data2Type }).then(function(data) {
+      $scope.data2.length = 0;
+      _(data.samples).each(function(sample) {
+        $scope.data2.push([sample.date, sample.value]);
       });
     });
   };
@@ -29,7 +38,7 @@ angular.module('home').controller('Dashboard', function($scope, $interval, $http
   $scope.refreshSensors();
   var interval = $interval(function() {
     $scope.refreshSensors();
-  }, 8000);
+  }, 6000);
 
   // Destroy interval with scope
   $scope.$on('$stateChangeStart', function() {
@@ -88,7 +97,7 @@ angular.module('home').controller('Dashboard', function($scope, $interval, $http
   // Chart configuration 1
   $scope.chartConfig1 = {
     options: {
-      colors: ['#f39c12'],
+      colors: ['#f39c12', '#3498db'],
       chart: {
         type: 'line',
         height: 362
@@ -104,17 +113,26 @@ angular.module('home').controller('Dashboard', function($scope, $interval, $http
       xAxis: {
         type: 'datetime'
       },
-      yAxis: {
+      yAxis: [{
         title: {
           text: '°C'
         },
         min: 0
-      },
+      }, {
+        title: {
+          text: '%'
+        },
+        min: 0,
+        opposite: true
+      }],
       title: null
     },
     series: [{
       data: $scope.data1,
       name: 'Temperature'
+    }, {
+      data: $scope.data2,
+      name: 'Humidity'
     }],
     loading: false
   };

@@ -1,31 +1,91 @@
 'use strict';
 
-var express = require('express');
-var app = express();
+var tessel = require('tessel');
+var http = require('http');
+var climatelib = require('climate-si7020');
 
 /**
- * Application status.
+ * Climate module.
  */
-app.get('/status', function(req, res) {
-  var pjson = require('./package.json');
+var climate = climatelib.use(tessel.port['B']);
 
-  res.json({
-    "name": pjson.name,
-    "version": pjson.version
+climate.on('ready', function () {
+  console.log('Connected to si7020!');
+
+  // Loop forever
+  setImmediate(function loop() {
+    climate.readTemperature('c', function (err, temp) {
+      climate.readHumidity(function (err, humid) {
+        updateSensor('main-temp', temp);
+        updateSensor('main-humidity', humid);
+        setTimeout(loop, 6000);
+      });
+    });
   });
 });
 
 /**
- * Booting server.
+ * CurrentCost EnviR interface.
  */
-var server = app.listen(3000, function() {
-  console.log('Listening on port %d', server.address().port);
+var port = tessel.port['A'];
+var uart = new port.UART({
+  baudrate: 57600
+});
+
+uart.on('data', function (data) {
+  var rg = /<watts>(\d*?)<\/watts>/gm;
+  var match = rg.exec(data.toString());
+  if (match) {
+    updateSensor('main-elec', parseInt(match[1]));
+  }
 });
 
 /**
- * Error handling.
+ * Update a sensor.
+ *
+ * @param id Sensor ID
+ * @param value Sensor value
  */
-app.use(function(err, req, res){
-  console.error(err.stack);
-  res.send(500, 'Internal server error');
+var updateSensor = function(id, value) {
+  dataQueue.push({ id: id, value: value, date: new Date().getTime() });
+};
+
+/**
+ * Main update loop.
+ */
+var dataQueue = [];
+setImmediate(function mainLoop() {
+  var options = {
+    hostname: '192.168.1.10',
+    port: 9999,
+    path: '/home-web/api/sensor/sample',
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    }
+  };
+
+  var req = http.request(options, function(res) {
+    res.setEncoding('utf8');
+    res.on('data', function () {
+      console.log('Sensors updated!');
+    });
+  });
+
+  req.on('error', function(e) {
+    console.log('problem with request: ' + e.message);
+  });
+
+  for (var i = 0; i < dataQueue.length; i++) {
+    var data = dataQueue[i];
+    req.write('id=' + data.id + '&date=' + data.date + '&value=' + data.value + '&');
+    console.log('Updating sensor [' + data.id + ', ' + data.date + '] with value: ' + data.value);
+  }
+
+  req.end();
+
+  dataQueue = [];
+  setTimeout(mainLoop, 6000);
 });
+
+console.log('Tessel started!');

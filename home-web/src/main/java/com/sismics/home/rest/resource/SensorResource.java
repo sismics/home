@@ -80,36 +80,50 @@ public class SensorResource extends BaseResource {
     /**
      * Creates a new sensor sample.
      *
-     * @param name Name
+     * @param id Sensor ID
+     * @param date Sample date
+     * @param value Sample value
      * @return Response
      */
     @PUT
-    @Path("{id: [a-z0-9\\-]+}/sample")
+    @Path("sample")
     @Produces(MediaType.APPLICATION_JSON)
     public Response createSample(
-            @PathParam("id") String id,
-            @FormParam("date") String dateStr,
-            @FormParam("value") Float value) {
-        // Check if the sensor exists
-        SensorDao sensorDao = new SensorDao();
-        SensorSampleDao sensorSampleDao = new SensorSampleDao();
-        Sensor sensor = sensorDao.getActiveById(id);
-        if (sensor == null) {
-            throw new ClientException("SensorNotFound", "The sensor doesn't exist");
+            @FormParam("id") List<String> idList,
+            @FormParam("date") List<String> dateStrList,
+            @FormParam("value") List<Float> valueList) {
+        // Pre-check data
+        if (idList.size() != dateStrList.size() || dateStrList.size() != valueList.size()) {
+            throw new ClientException("DataError", "Data length mismatch");
         }
         
-        // Validate the input data
-        ValidationUtil.validateRequired(value, "value");
-        Date date = ValidationUtil.validateDate(dateStr, "date", false);
-
-        // Create the sensor sample
-        SensorSample sample = new SensorSample();
-        sample.setCreateDate(date);
-        sample.setValue(value);
-        sample.setSensorId(id);
-        sample.setType(SensorSampleType.RAW);
-
-        sensorSampleDao.create(sample);
+        int index = 0;
+        for (String id : idList) {
+            Float value = valueList.get(index);
+            String dateStr = dateStrList.get(index);
+            
+            // Check if the sensor exists
+            SensorDao sensorDao = new SensorDao();
+            SensorSampleDao sensorSampleDao = new SensorSampleDao();
+            Sensor sensor = sensorDao.getActiveById(id);
+            if (sensor == null) {
+                throw new ClientException("SensorNotFound", "The sensor doesn't exist");
+            }
+            
+            // Validate the input data
+            ValidationUtil.validateRequired(value, "value");
+            Date date = ValidationUtil.validateDate(dateStr, "date", false);
+    
+            // Create the sensor sample
+            SensorSample sample = new SensorSample();
+            sample.setCreateDate(date);
+            sample.setValue(value);
+            sample.setSensorId(id);
+            sample.setType(SensorSampleType.RAW);
+    
+            sensorSampleDao.create(sample);
+            index++;
+        }
 
         // Always return OK
         return Response.ok()
