@@ -1,0 +1,10 @@
+<Configure class="org.eclipse.jetty.webapp.WebAppContext">
+  <Set name="contextPath">/</Set>
+  <Set name="war"><SystemProperty name="jetty.data" default="."/>/webapps/home.war</Set>
+
+  <Call class="java.lang.System" name="setProperty">
+    <Arg>home.home</Arg>
+    <Arg>/data</Arg>
+  </Call>
+
+</Configure>
