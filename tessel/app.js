@@ -60,9 +60,9 @@ var updateSensor = function(id, value) {
 var dataQueue = [];
 setImmediate(function mainLoop() {
   var options = {
-    hostname: '192.168.1.10',
-    port: 9999,
-    path: '/home-web/api/sensor/sample',
+    hostname: 'myhome.bgamard.org',
+    port: 80,
+    path: '/api/sensor/sample',
     method: 'PUT',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded'
