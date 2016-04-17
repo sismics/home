@@ -7,7 +7,7 @@ var climatelib = require('climate-si7020');
 /**
  * Climate module.
  */
-var climate = climatelib.use(tessel.port['B']);
+var climate = climatelib.use(tessel.port['A']);
 
 climate.on('ready', function () {
   console.log('Connected to si7020!');
@@ -27,16 +27,20 @@ climate.on('ready', function () {
 /**
  * CurrentCost EnviR interface.
  */
-var port = tessel.port['A'];
+var port = tessel.port['B'];
 var uart = new port.UART({
   baudrate: 57600
 });
 
+var buffer = '';
 uart.on('data', function (data) {
-  var rg = /<watts>(\d*?)<\/watts>/gm;
-  var match = rg.exec(data.toString());
-  if (match) {
-    updateSensor('main-elec', parseInt(match[1]));
+  buffer += data.toString();
+  if (buffer.trim().endsWith('</msg>')) {
+    var match = /<watts>(\d*?)<\/watts>/gm.exec(buffer.toString());
+    if (match) {
+      updateSensor('main-elec', parseInt(match[1]));
+    }
+	buffer = '';
   }
 });
 
@@ -65,9 +69,11 @@ setImmediate(function mainLoop() {
     }
   };
 
+  tessel.led[2].on();
   var req = http.request(options, function(res) {
     res.setEncoding('utf8');
     res.on('data', function () {
+	  tessel.led[2].off();
       console.log('Sensors updated!');
     });
   });
