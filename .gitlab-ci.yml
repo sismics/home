@@ -1,0 +1,5 @@
+deploy_job:
+  script:
+    - . docker-walter
+    - ./build.sh
+    - ./run-service.sh
